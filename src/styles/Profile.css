@@ -27,8 +27,34 @@
     border-radius: 50px;
     color: #0A2893;
     width: 230px;
+
+}
+
+.roles div:hover{
+    transform: scale(103%);
+
 }
 
 .roles div a{
     font-size: 1.7rem;
+    cursor: default;
+}
+
+.myWorks{
+    background-image: url('../../public/image/image 1.png');
+    padding: 3rem;
+    background-size: 100% 100%;
+    backdrop-filter: blur(5px);
+}
+
+.wrksContainer{
+    background-color: white;
+}
+
+.kontakts{
+    border-bottom: 1px solid black;
+}
+
+.kontakts a:hover{
+    transform: scale(105%);
 }
