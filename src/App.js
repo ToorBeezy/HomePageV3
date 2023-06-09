@@ -13,6 +13,7 @@ import "./styles/layout/footer.css";
 import "./styles/FirstPage.css";
 import "./styles/LoginPage.css"
 import "./styles/Profile.css"
+import "./styles/ProfileEditor.css"
 import { BrowserRouter as Router } from "react-router-dom";
 
 import styles from './styles/HomeModule.css';

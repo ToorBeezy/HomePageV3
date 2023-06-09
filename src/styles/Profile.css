@@ -15,27 +15,24 @@
     transform: scale(105%);
 }
 
-.profileName h1{
+.profileName h1, .profileName button{
     border-bottom: 1px solid black;
-    width: 115%;
 }
 
-.roles div{
+.roleContainer{
     padding: .5rem .2rem;
     margin-right: 1rem;
     background-color: #FF6498;
     border-radius: 50px;
     color: #0A2893;
     width: 230px;
-
 }
 
-.roles div:hover{
+.roleContainer:hover{
     transform: scale(103%);
-
 }
 
-.roles div a{
+.role{
     font-size: 1.7rem;
     cursor: default;
 }
@@ -51,10 +48,10 @@
     background-color: white;
 }
 
-.kontakts{
-    border-bottom: 1px solid black;
-}
-
 .kontakts a:hover{
     transform: scale(105%);
+}
+
+.social{
+    border-bottom: 1px solid black;
 }
