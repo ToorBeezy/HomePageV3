@@ -8,6 +8,7 @@ body {
     margin: 0;
     background: #FFFFFF;
     --bs-link-hover-color: initial;
+    min-height: 100vh;
 }
 
 a {
@@ -18,4 +19,7 @@ a {
 * {
     box-sizing: border-box;
 }
-input {outline:none;}
+
+input{
+    outline:none;
+}

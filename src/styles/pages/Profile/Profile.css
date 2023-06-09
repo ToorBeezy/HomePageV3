@@ -1,21 +1,9 @@
-
-.redactProfile{
-    font-family: 'Sansation', sans-serif;
-    font-size: 30px;
+.roles{
+    max-height: 55px;
 }
 
-.buttonRedact{
-    background-color: #FF6498;
-    border-radius: 50px;
-    margin: 3rem;
-    padding: 1rem 4rem;
-    color: #0A2893;
-}
-.buttonRedact:hover{
-    transform: scale(105%);
-}
-
-.profileName h1, .profileName button{
+.profileName h1,
+.profileName input{
     border-bottom: 1px solid black;
 }
 
@@ -38,7 +26,7 @@
 }
 
 .myWorks{
-    background-image: url('../../public/image/image 1.png');
+    background-image: url('../../../../public/image/image 1.png');
     padding: 3rem;
     background-size: 100% 100%;
     backdrop-filter: blur(5px);

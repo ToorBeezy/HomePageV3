@@ -6,14 +6,16 @@ import Footer from "./components/layout/Footer.js";
 import FirstPage from "./components/FirstPage"
 import LoginPage from "./components/LoginPage";
 import Profile from "./components/Profile";
+import LogOutPage from "./components/LogOutPage";
 
 import "./styles/index.css";
 import "./styles/layout/header.css";
 import "./styles/layout/footer.css";
-import "./styles/FirstPage.css";
-import "./styles/LoginPage.css"
-import "./styles/Profile.css"
-import "./styles/ProfileEditor.css"
+import "./styles/pages/FirstPage.css";
+import "./styles/pages/LoginPage.css"
+import "./styles/pages/Profile/Profile.css"
+import "./styles/pages/Profile/ProfileEditor.css"
+import "./styles/pages/LogOutPage.css"
 import { BrowserRouter as Router } from "react-router-dom";
 
 import styles from './styles/HomeModule.css';
@@ -28,7 +30,8 @@ function App() {
                   <Header/>
                   {/*<FirstPage/>*/}
                   {/*<LoginPage/>*/}
-                  <Profile/>
+                  {/*<Profile/>*/}
+                  <LogOutPage/>
                   <Footer/>
               </main>
 
