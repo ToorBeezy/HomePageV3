@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import colage from "../../public/image/colage.png";
+import HelloPart from "./External/HelloPart";
 
 const LoginPage = () => {
 
@@ -47,17 +48,7 @@ const LoginPage = () => {
     }
     return (
         <div className='justify-center mb-44'>
-            <div className='FirstPage flex flex-column justify-center px-10 text-5xl'>
-                <h1>Наш веб-сервис позволит студентам легко искать себе
-                    команду для создания проекта.
-                    Создайте свой профиль, указывайте свои достижения
-                    и находите команду по душе!
-                </h1>
-            </div>
-
-            <div className='colage'>
-                <img src={colage}  alt=''/>
-            </div>
+            <HelloPart/>
 
             <form className="loginForm justify-center flex flex-column text-center" onSubmit={handleLogIn}>
                 <div className='input pb-12'>

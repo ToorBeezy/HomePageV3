@@ -1,21 +1,12 @@
 import React, {Component} from 'react';
 import colage from '../../public/image/colage.png';
+import HelloPart from "./External/HelloPart";
 
 class FirstPage extends Component {
     render() {
         return (
             <div className='justify-center mb-44'>
-                <div className='FirstPage flex flex-column justify-center px-10 text-5xl'>
-                    <h1>Наш веб-сервис позволит студентам легко искать себе
-                        команду для создания проекта.
-                        Создайте свой профиль, указывайте свои достижения
-                        и находите команду по душе!
-                    </h1>
-                </div>
-
-                <div className='colage'>
-                    <img src={colage}  alt=''/>
-                </div>
+                <HelloPart/>
                 <div className='comingText text-6xl font-light pt-12'>
                     <h1>Присоединяйся к нам!</h1>
                 </div>
