@@ -17,8 +17,8 @@ class Profile extends Component {
         editNameFlag: false,
         name: "Kurochkina Darya Nikolaevna",
         about: "Я умею смеяться и веселиться. В прошлом семестре по предмету опд получила 97 баллов",
-        vk: "vk/123",
-        tg: "tg/123",
+        vk: "",
+        tg: "",
     }
 
     switchNameRedactor = () => {
@@ -102,9 +102,7 @@ class Profile extends Component {
 
         const rolesList = this.state.rolesArr.map((role, pos) =>
             <button onClick={() => this.deleteRole(pos)} className='roleContainer' key={role.id}>
-                <a className='role'>
-                    {role.name}
-                </a>
+                {role.name}
             </button>);
 
 
@@ -229,6 +227,7 @@ class Profile extends Component {
 
                                     <input
                                         className='tgLink text-3xl font-light'
+                                        placeholder='Вставьте ссылку'
                                         value={this.state.tg}
                                         onChange={(e) => this.setState({tg:e.target.value})}/>
                                 </div>
@@ -240,10 +239,10 @@ class Profile extends Component {
 
                                     <input
                                         className='tgLink text-3xl font-light'
+                                        placeholder='Вставьте ссылку'
                                         value={this.state.vk}
                                         onChange={(e) => this.setState({vk:e.target.value})}/>
                                 </div>
-
                             </div>
                         </div>
                     </div>}

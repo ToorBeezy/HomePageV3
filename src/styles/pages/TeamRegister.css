@@ -3,6 +3,7 @@
     font-size: 2.5rem;
     text-align: center;
     display: block;
+    cursor: default;
     padding: 1.2rem 2.5rem;
     background-color: #1044FD;
     margin-top: 3rem;
@@ -15,7 +16,6 @@
 }
 
 .registerButton:hover {
-    transform: scale(105%);
     color: #FF7EA9;
 }
 
@@ -28,4 +28,50 @@
 .plusProfileAvatar{
     margin-left: 1rem;
     margin-top: .6rem;
+}
+
+.pickRolesText{
+    padding: 1rem 1rem;
+    background-color: #FF6498;
+    border-radius: 50px;
+    color: #0A2893;
+    font-size: 3rem;
+}
+
+.pickRoleContainer{
+    padding: 1rem 3rem;
+    margin-right: 1rem;
+    background-color: #FF6498;
+    border-radius: 50px;
+    color: #0A2893;
+    width: 320px;
+    font-size: 2rem;
+}
+
+.pickRoleContainer:hover{
+    transform: scale(103%);
+}
+
+.teamRegister_tgImg{
+    margin-right: 5.5rem;
+}
+
+.register_okButton {
+    position: relative;
+    font-size: 3rem;
+    text-align: center;
+    display: block;
+    cursor: pointer;
+    padding: 0 7rem;
+    background-color: #1044FD;
+    border-radius: 50px;
+    color: whitesmoke;
+    font-style: normal;
+    font-weight: 300;
+    transition: color .4s ease;
+    text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.register_okButton:hover {
+    color: #FF7EA9;
 }
