@@ -20,6 +20,7 @@ import "./styles/pages/Profile/ProfileEditor.css"
 import "./styles/pages/LogOutPage.css"
 import "./styles/pages/TeamRegister.css"
 import { BrowserRouter as Router } from "react-router-dom";
+import Slider from "./components/widgets/Slider/Slider";
 
 function App() {
 

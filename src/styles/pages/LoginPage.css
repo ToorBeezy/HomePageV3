@@ -44,3 +44,8 @@
     transform: scale(105%);
     color: #FF7EA9;
 }
+
+.worksExampleImages{
+    height: 85vh;
+    width: 80vh;
+}

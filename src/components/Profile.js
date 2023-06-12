@@ -8,12 +8,15 @@ import TgIco from '../../public/image/TelegramIco.png'
 import Editor from '../../public/image/Editor.png';
 import plusRoles from '../../public/image/plusRoles.png'
 import {data} from "../Shared/ProfileRoles";
+import Slider from "./widgets/Slider/Slider";
+import plusProfileAvatar from "../../public/image/plusRoles.png";
 
 class Profile extends Component {
     state = {
-        flag: true,
+        flag: false,
         dropdownState: false,
         rolesArr: data,
+        worksExampleArr: [],
         editNameFlag: false,
         name: "Kurochkina Darya Nikolaevna",
         about: "Я умею смеяться и веселиться. В прошлом семестре по предмету опд получила 97 баллов",
@@ -51,7 +54,20 @@ class Profile extends Component {
         element.style.height = (element.scrollHeight) + "px";
     }
 
-
+    addImageToWorksExampleArr = event => {
+        if (event.target.files && event.target.files[0]) {
+            const temp = [...this.state.worksExampleArr]
+            let tempImg = event.target.files[0]
+            let image = {
+                title: this.state.worksExampleArr.length + 1,
+                src: URL.createObjectURL(tempImg)
+            }
+            temp.push(image)
+            this.setState({
+                worksExampleArr: temp
+            })
+        }
+    }
 
     deleteRole = (pos) => {
         if(!this.state.flag) return
@@ -64,7 +80,7 @@ class Profile extends Component {
 
     addRole = (name) => {
         const temp = [...this.state.rolesArr]
-        let role ={
+        let role = {
             id: 0,
             name: ""
         }
@@ -180,41 +196,24 @@ class Profile extends Component {
                             </div>
                         </div>
 
-                        <div className='flex flex-col justify-left ml-12 mb-5'>
-                            <h1 className='text-5xl font-light text-left'>Мои работы:</h1>
-                            <div className='flex'>
-                                <h1 className='text-center mt-8 mr-3 text-4xl'>
-                                    Добавить файл
-                                </h1>
-                                <button className='ml-4 mt-9 w-fit'>
-                                    <img className='plusWorks' src={plusRoles}/>
-                                </button>
-                            </div>
+                        <div className='flex mb-4 ml-12'>
+                            <h1 className='text-4xl font-light'>
+                                Добавить фото примера работ
+                            </h1>
 
-                        </div>
-
-                        <div className='myWorks mb-20'>
-                            <div className='wrksContainer flex justify-center text-center m-auto'>
-                                <div className='wrkExample'>
-                                    <img src={wrkExample}/>
-                                </div>
-
-                                <div className='wrkExample'>
-                                    <img src={wrkExample}/>
-                                </div>
-
-                                <div className='wrkExample'>
-                                    <img src={wrkExample}/>
-                                </div>
-
-                                <div className='wrkExample'>
-                                    <img src={wrkExample}/>
-                                </div>
-
+                            <div className='plusProfileAvatar h-fit'>
+                                <input
+                                    className='absolute cursor-pointer avatarInput w-6 opacity-0'
+                                    type="file"
+                                    name="myImage"
+                                    onChange={this.addImageToWorksExampleArr} />
+                                <img className='' src={plusProfileAvatar}/>
                             </div>
                         </div>
+                        <Slider Arr = {this.state.worksExampleArr}/>
 
-                        <div className='linksEdit flex align-items-lg-end w-1/3'>
+
+                        <div className='linksEdit flex align-items-lg-end mt-20 w-1/3'>
                             <div className='text-5xl font-light mx-12 text-center mb-12'>
                                 <h1>Контакты:</h1>
                             </div>
@@ -295,28 +294,9 @@ class Profile extends Component {
                             <h1 className='text-5xl font-light text-left'>Мои работы:</h1>
                         </div>
 
-                        <div className='myWorks mb-20'>
-                            <div className='wrksContainer flex justify-center text-center m-auto'>
-                                <div className='wrkExample'>
-                                    <img src={wrkExample}/>
-                                </div>
+                        <Slider Arr = {this.state.worksExampleArr}/>
 
-                                <div className='wrkExample'>
-                                    <img src={wrkExample}/>
-                                </div>
-
-                                <div className='wrkExample'>
-                                    <img src={wrkExample}/>
-                                </div>
-
-                                <div className='wrkExample'>
-                                    <img src={wrkExample}/>
-                                </div>
-
-                            </div>
-                        </div>
-
-                        <div className='flex kontakts align-items-lg-end w-1/3 m-auto'>
+                        <div className='flex kontakts align-items-lg-end mt-12 w-1/3 mx-auto'>
                             <div className='text-5xl font-light mx-12'>
                                 <h1>Контакты:</h1>
                             </div>

@@ -4,10 +4,12 @@ import HelloPart from "./External/HelloPart";
 import {data} from "../Shared/ProfileRoles";
 import TgIco from "../../public/image/TelegramIco.png";
 import VkIco from "../../public/image/Vector(1).png";
+import Slider from "./widgets/Slider/Slider";
 
 class TeamRegister extends Component {
     state = {
         teamName: "",
+        worksExampleArr: [],
         teamAvatar: null,
         workExample: null,
         rolesArr: data,
@@ -36,6 +38,21 @@ class TeamRegister extends Component {
             });
         }
     };
+
+    addImageToWorksExampleArr = event => {
+        if (event.target.files && event.target.files[0]) {
+            const temp = [...this.state.worksExampleArr]
+            let tempImg = event.target.files[0]
+            let image = {
+                title: this.state.worksExampleArr.length + 1,
+                src: URL.createObjectURL(tempImg)
+            }
+            temp.push(image)
+            this.setState({
+                worksExampleArr: temp
+            })
+        }
+    }
 
 
     render() {
@@ -74,7 +91,7 @@ class TeamRegister extends Component {
                         </h1>
                         <div className='plusProfileAvatar h-fit'>
                             <input
-                                className='absolute avatarInput w-6 opacity-0'
+                                className='absolute cursor-pointer avatarInput w-6 opacity-0'
                                 type="file"
                                 name="myImage"
                                 onChange={this.onImageChange} />
@@ -85,7 +102,7 @@ class TeamRegister extends Component {
                 </div>
 
                 <div className='flex flex-col text-center mb-20 mx-auto w-full'>
-                    <div className='pickRolesText mx-auto mb-10'>
+                    <div className='pickRolesText px-5 mx-auto mb-10'>
                         <h1>
                             Укажите, кого вы ищете в свою команду
                         </h1>
@@ -103,7 +120,7 @@ class TeamRegister extends Component {
                         </h1>
                     </div>
 
-                    <div className='ml-5 my-3 text-3xl w-5/6'>
+                    <div className='my-3 text-3xl w-5/6'>
                         <textarea
                             className='aboutInput w-full'
                             value={this.state.teamAbout}
@@ -112,22 +129,22 @@ class TeamRegister extends Component {
                     </div>
                 </div>
 
-                <div className='flex mb-12 ml-12'>
+                <div className='flex mb-20 ml-12'>
                     <h1 className='text-4xl font-light'>
                         Добавить фото примера работ
                     </h1>
 
                     <div className='plusProfileAvatar h-fit'>
                         <input
-                            className='absolute avatarInput w-6 opacity-0'
+                            className='absolute cursor-pointer avatarInput w-6 opacity-0'
                             type="file"
                             name="myImage"
-                            onChange={this.onWorkExampleChange} />
+                            onChange={this.addImageToWorksExampleArr} />
                         <img className='' src={plusProfileAvatar}/>
                     </div>
                 </div>
 
-                <img className='ml-8' src={this.state.workExample} />
+                <Slider Arr = {this.state.worksExampleArr}/>
 
                 <div className='flex mb-32 ml-12'>
                     <h1 className='text-4xl font-light'>
