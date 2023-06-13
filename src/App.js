@@ -8,6 +8,7 @@ import LoginPage from "./components/LoginPage";
 import Profile from "./components/Profile";
 import LogOutPage from "./components/LogOutPage";
 import TeamRegister from "./components/TeamRegister";
+import TeamProfile from "./components/TeamProfile";
 
 import styles from './styles/HomeModule.css';
 import "./styles/index.css";
@@ -19,8 +20,10 @@ import "./styles/pages/Profile/Profile.css"
 import "./styles/pages/Profile/ProfileEditor.css"
 import "./styles/pages/LogOutPage.css"
 import "./styles/pages/TeamRegister.css"
+import "./styles/External/UserMinimalisticProfile.css"
+import "./styles/pages/TeamProfile/TeamProfile.css"
+import "./styles/pages/TeamProfile/TeamProfileEditor.css"
 import { BrowserRouter as Router } from "react-router-dom";
-import Slider from "./components/widgets/Slider/Slider";
 
 function App() {
 
@@ -34,7 +37,8 @@ function App() {
                   {/*<LoginPage/>*/}
                   {/*<Profile/>*/}
                   {/*<LogOutPage/>*/}
-                  <TeamRegister/>
+                  {/*<TeamRegister/>*/}
+                  <TeamProfile/>
                   <Footer/>
               </main>
 

@@ -163,7 +163,7 @@ class LoginPage extends Component {
                     </div>
                 </div>
 
-                <Slider Arr = {this.state.worksExampleArr}/>
+                {this.state.worksExampleArr.length > 0 && <Slider Arr = {this.state.worksExampleArr}/>}
 
                 <div className='ml-12 mb-24'>
                     <div className='mb-12 text-5xl font-light'>

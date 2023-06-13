@@ -5,11 +5,13 @@ import {data} from "../Shared/ProfileRoles";
 import TgIco from "../../public/image/TelegramIco.png";
 import VkIco from "../../public/image/Vector(1).png";
 import Slider from "./widgets/Slider/Slider";
+import UserMinimalisticProfile from "./External/UserMinimalisticProfile";
 
 class TeamRegister extends Component {
     state = {
         teamName: "",
         worksExampleArr: [],
+        teamMembersArr: [],
         teamAvatar: null,
         workExample: null,
         rolesArr: data,
@@ -30,14 +32,18 @@ class TeamRegister extends Component {
         }
     };
 
-    onWorkExampleChange = event => {
-        if (event.target.files && event.target.files[0]) {
-            let img = event.target.files[0];
-            this.setState({
-                workExample: URL.createObjectURL(img)
-            });
+    addTeamMembersArr = event => {
+        const temp = [...this.state.teamMembersArr]
+        let member = {
+            name: "Zakarev Alexey Vasilyevich",
+            about: "Я умею смеяться и веселиться V прошлом семестре по предмету опд получила 97 баллов",
+            rolesArr: this.state.rolesArr,
         }
-    };
+        temp.push(member)
+        this.setState({
+            teamMembersArr: temp
+        })
+    }
 
     addImageToWorksExampleArr = event => {
         if (event.target.files && event.target.files[0]) {
@@ -57,10 +63,16 @@ class TeamRegister extends Component {
 
     render() {
 
-        const rolesList = this.state.rolesArr.map((role, pos) =>
+        const rolesList = this.state.rolesArr.map((role) =>
             <button className='pickRoleContainer' key={role.id}>
                 {role.name}
             </button>);
+
+        const teamMembersList = this.state.teamMembersArr.map((member) =>
+            <UserMinimalisticProfile
+                name = {member.name}
+                about = {member.about}
+                rolesArr = {member.rolesArr} />);
 
 
         return (
@@ -144,20 +156,21 @@ class TeamRegister extends Component {
                     </div>
                 </div>
 
-                <Slider Arr = {this.state.worksExampleArr}/>
+                {this.state.worksExampleArr.length > 0 && <Slider Arr = {this.state.worksExampleArr}/>}
 
-                <div className='flex mb-32 ml-12'>
+                <div className='flex mb-16 ml-12'>
                     <h1 className='text-4xl font-light'>
                         Добавить участников команды
                     </h1>
 
                     <div className='plusProfileAvatar h-fit'>
-                        <input
-                            className='absolute avatarInput w-6 opacity-0'
-                            name="myImage"/>
-                        <img className='' src={plusProfileAvatar}/>
+                        <button onClick={this.addTeamMembersArr}>
+                            <img src={plusProfileAvatar}/>
+                        </button>
                     </div>
                 </div>
+
+                {teamMembersList}
 
                 <div className='ml-12 mb-24'>
                     <div className='mb-12 text-5xl font-light'>

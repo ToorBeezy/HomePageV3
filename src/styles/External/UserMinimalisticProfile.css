@@ -1,0 +1,33 @@
+
+.minProfile_avatarImg{
+    width: 225px;
+    height: 225px;
+    border-radius: 100%;
+}
+
+.minProfile_Name{
+    border-bottom: 1px solid #1044FD;
+}
+
+.minProfile_roles{
+    padding: .5rem 1rem;
+    margin-right: 1rem;
+    background-color: #FF6498;
+    border-radius: 50px;
+    color: #0A2893;
+    font-size: 1.2rem;
+    height: 45px;
+    width: 170px;
+    text-align: center;
+}
+
+.minProfile_infoContainer{
+    max-width: 700px;
+    max-height: 19.7ch;
+    overflow: hidden;
+}
+
+.minProfile_aboutText{
+
+    max-height: 6ch;
+}

@@ -1,44 +1,41 @@
 import React, {Component} from 'react';
-import wmnPic from '../../public/image/image 6.png'
-import manPic from '../../public/image/image 5.png'
-import avatar from '../../public/image/Ellipse 1.png'
-import VkIco from '../../public/image/Vector(1).png'
-import TgIco from '../../public/image/TelegramIco.png'
-import Editor from '../../public/image/Editor.png';
-import plusRoles from '../../public/image/plusRoles.png'
+import colage from "../../public/image/colage.png";
+import avatar from "../../public/image/Ellipse 1.png";
 import {data} from "../Shared/ProfileRoles";
-import Slider from "./widgets/Slider/Slider";
 import plusProfileAvatar from "../../public/image/plusRoles.png";
+import UserMinimalisticProfile from "./External/UserMinimalisticProfile";
+import TgIco from "../../public/image/TelegramIco.png";
+import VkIco from "../../public/image/Vector(1).png";
+import Slider from "./widgets/Slider/Slider";
+import Editor from "../../public/image/Editor.png";
+import plusRoles from "../../public/image/plusRoles.png";
 
-class Profile extends Component {
+class TeamProfile extends Component {
     state = {
         flag: false,
         dropdownState: false,
         rolesArr: data,
         worksExampleArr: [],
-        editNameFlag: false,
-        name: "Kurochkina Darya Nikolaevna",
-        about: "Я умею смеяться и веселиться. В прошлом семестре по предмету опд получила 97 баллов",
+        editTeamNameFlag: false,
         vk: "",
         tg: "",
+        name: "Cool Papers",
+        about: "Веселая и дружная команда , ищем аналитика и тимлида",
+        teamMembersArr: [],
     }
 
-    switchNameRedactor = () => {
-        this.setState(state => {
-            return{
-                editNameFlag: !state.editNameFlag
-            }
+    addTeamMembersArr = event => {
+        const temp = [...this.state.teamMembersArr]
+        let member = {
+            name: "Zakarev Alexey Vasilyevich",
+            about: "Я умею смеяться и веселиться V прошлом семестре по предмету опд получила 97 баллов",
+            rolesArr: this.state.rolesArr,
+        }
+        temp.push(member)
+        this.setState({
+            teamMembersArr: temp
         })
-    };
-
-    switchRedactorMode = () => {
-        this.setState(state => {
-            return{
-                flag: !state.flag,
-                editNameFlag: false
-            }
-        })
-    };
+    }
 
     handleDropdownClick = () =>{
         this.setState(state => {
@@ -46,11 +43,6 @@ class Profile extends Component {
                 dropdownState: !state.dropdownState
             }
         })
-    }
-
-    auto_grow = (element) => {
-        element.style.height = "5px";
-        element.style.height = (element.scrollHeight) + "px";
     }
 
     addImageToWorksExampleArr = event => {
@@ -66,6 +58,28 @@ class Profile extends Component {
                 worksExampleArr: temp
             })
         }
+    }
+
+    switchTeamNameRedactor = () => {
+        this.setState(state => {
+            return{
+                editTeamNameFlag: !state.editTeamNameFlag
+            }
+        })
+    };
+
+    switchRedactorMode = () => {
+        this.setState(state => {
+            return{
+                flag: !state.flag,
+                editNameFlag: false
+            }
+        })
+    };
+
+    auto_grow = (element) => {
+        element.style.height = "5px";
+        element.style.height = (element.scrollHeight) + "px";
     }
 
     deleteRole = (pos) => {
@@ -124,6 +138,7 @@ class Profile extends Component {
         })
     }
 
+
     render() {
 
         const rolesList = this.state.rolesArr.map((role, pos) =>
@@ -131,23 +146,26 @@ class Profile extends Component {
                 {role.name}
             </button>);
 
+        const teamMembersList = this.state.teamMembersArr.map((member) =>
+            <UserMinimalisticProfile
+                name = {member.name}
+                about = {member.about}
+                rolesArr = {member.rolesArr} />);
 
         return (
             <div>
                 {this.state.flag &&
-                    <div className='profile pb-36'>
-                        <div className='avatarDiv flex mt-16 mx-5 justify-center'>
-                            <div>
-                                <img src={wmnPic}/>
-                            </div>
+                    <div className='mb-44'>
+                        <div className='colage'>
+                            <img className='w-full' src={colage}  alt=''/>
+                        </div>
+
+                        <div className='avatarDiv flex mt-12 mx-5 justify-center'>
 
                             <div className='text-center my-auto mx-24'>
                                 <img src={avatar}/>
                             </div>
 
-                            <div>
-                                <img src={manPic}/>
-                            </div>
                         </div>
 
                         <div className='text-center redactProfile'>
@@ -156,44 +174,24 @@ class Profile extends Component {
                             </div>
                         </div>
 
-                        <div className='text-center flex justify-between mx-auto mb-12'>
-                            <div className='profileName flex text-5xl font-light text-left ml-12'>
-                                {this.state.editNameFlag &&
-                                    <textarea
-                                        className='nameInput'
-                                        type='text'
-                                        value={this.state.name}
-                                        onInput={() => this.auto_grow(document.querySelector('.nameInput'))}
-                                        onChange={(e) => this.setState({name:e.target.value})}/>}
-                                {!this.state.editNameFlag && <h1 className='redactorOfName'>{this.state.name}</h1>}
-                                <button onClick={this.switchNameRedactor}>
-                                    <img className='max-w-fit' src={Editor}/>
-                                </button>
-                            </div>
-
-                            <div className='roles juswtify-left flex mx-auto'>
-                                {rolesList}
-                                {this.state.dropdownState && (
-                                    <div className='dropdown'>
-                                        <ul className='roleContainer_list absolute top-20 right-0'>
-                                            <button onClick={() => this.addRole("Гейм-дизайнер")} className='role_list w-full'>Гейм-дизайнер</button>
-                                            <button onClick={() => this.addRole("Разработчик")} className='role_list w-full'>Разработчик</button>
-                                            <button onClick={() => this.addRole("Дизайнер")} className='role_list w-full'>Дизайнер</button>
-                                            <button onClick={() => this.addRole("Тимлид")} className='role_list w-full'>Тимлид</button>
-                                        </ul>
-                                    </div>
-                                )}
-                                <button onBlur={this.hide} onClick={this.handleDropdownClick}>
-                                    <img src={plusRoles}/>
-                                </button>
-
-                            </div>
+                        <div className='profileName flex text-5xl font-light text-left mb-12 ml-12'>
+                            {this.state.editTeamNameFlag &&
+                                <textarea
+                                    className='nameInput'
+                                    type='text'
+                                    value={this.state.name}
+                                    onInput={() => this.auto_grow(document.querySelector('.nameInput'))}
+                                    onChange={(e) => this.setState({name:e.target.value})}/>}
+                            {!this.state.editTeamNameFlag && <h1 className='redactorOfName'>{this.state.name}</h1>}
+                            <button onClick={this.switchTeamNameRedactor}>
+                                <img className='max-w-fit' src={Editor}/>
+                            </button>
                         </div>
 
                         <div className='flex flex-col justify-left ml-12'>
                             <div className='text-5xl font-light text-left'>
                                 <h1>
-                                    Обо мне:
+                                    О нас:
                                 </h1>
                             </div>
 
@@ -205,6 +203,45 @@ class Profile extends Component {
                                     onChange={(e) => this.setState({about:e.target.value})}/>
                             </div>
                         </div>
+
+                        <div className='flex flex-col justify-left ml-12 mb-8'>
+                            <div className='text-5xl font-light text-left'>
+                                <h1>
+                                    Мы ищем:
+                                </h1>
+                            </div>
+                        </div>
+
+                        <div className='roles juswtify-left flex ml-8'>
+                            {rolesList}
+                            {this.state.dropdownState && (
+                                <div className='dropdown'>
+                                    <ul className='roleContainer_list absolute top-20 '>
+                                        <button onClick={() => this.addRole("Гейм-дизайнер")} className='role_list w-full'>Гейм-дизайнер</button>
+                                        <button onClick={() => this.addRole("Разработчик")} className='role_list w-full'>Разработчик</button>
+                                        <button onClick={() => this.addRole("Дизайнер")} className='role_list w-full'>Дизайнер</button>
+                                        <button onClick={() => this.addRole("Тимлид")} className='role_list w-full'>Тимлид</button>
+                                    </ul>
+                                </div>
+                            )}
+                            <button onBlur={this.hide} onClick={this.handleDropdownClick}>
+                                <img src={plusRoles}/>
+                            </button>
+                        </div>
+
+                        <div className='flex my-16 ml-12'>
+                            <h1 className='text-4xl font-light'>
+                                Добавить участника
+                            </h1>
+
+                            <div className='plusProfileAvatar h-fit'>
+                                <button onClick={this.addTeamMembersArr}>
+                                    <img src={plusProfileAvatar}/>
+                                </button>
+                            </div>
+                        </div>
+
+                        {teamMembersList}
 
                         <div className='flex mb-4 ml-12'>
                             <h1 className='text-4xl font-light'>
@@ -258,19 +295,17 @@ class Profile extends Component {
                     </div>}
 
                 {!this.state.flag &&
-                    <div className='pb-36'>
-                        <div className='avatarDiv flex mt-16 mx-5 justify-center'>
-                            <div>
-                                <img src={wmnPic}/>
-                            </div>
+                    <div className='mb-44'>
+                        <div className='colage'>
+                            <img className='w-full' src={colage}  alt=''/>
+                        </div>
+
+                        <div className='avatarDiv flex mt-12 mx-5 justify-center'>
 
                             <div className='text-center my-auto mx-24'>
                                 <img src={avatar}/>
                             </div>
 
-                            <div>
-                                <img src={manPic}/>
-                            </div>
                         </div>
 
                         <div className='text-center redactProfile'>
@@ -281,16 +316,12 @@ class Profile extends Component {
                             <div className='profileName text-5xl font-light text-left ml-12 mr-24'>
                                 <h1>{this.state.name}</h1>
                             </div>
-
-                            <div className='roles justify-left flex mx-auto'>
-                                {rolesList}
-                            </div>
                         </div>
 
                         <div className='flex flex-col justify-left ml-12'>
                             <div className='text-5xl font-light text-left'>
                                 <h1>
-                                    Обо мне:
+                                    О нас:
                                 </h1>
                             </div>
 
@@ -301,8 +332,30 @@ class Profile extends Component {
                             </div>
                         </div>
 
+                        <div className='flex flex-col justify-left ml-12 mb-8'>
+                            <div className='text-5xl font-light text-left'>
+                                <h1>
+                                    Мы ищем:
+                                </h1>
+                            </div>
+                        </div>
+
+                        <div className='roles ml-8'>
+                            {rolesList}
+                        </div>
+
+                        <div className='flex my-16 ml-12'>
+                            <h1 className='text-4xl'>
+                                Наши участники:
+                            </h1>
+                        </div>
+
+                        {teamMembersList}
+
                         <div className='flex flex-col justify-left ml-12 mb-5'>
-                            <h1 className='text-5xl font-light text-left'>Мои работы:</h1>
+                            <h1 className='text-5xl font-light text-left'>
+                                Наши работы:
+                            </h1>
                         </div>
 
                         {this.state.worksExampleArr.length > 0 && <Slider Arr = {this.state.worksExampleArr}/>}
@@ -327,5 +380,6 @@ class Profile extends Component {
             </div>
         );
     }
-};
-export default Profile;
+}
+
+export default TeamProfile;
