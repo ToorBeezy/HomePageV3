@@ -13,6 +13,7 @@
 }
 
 .roleContainer{
+    transition: color .4s ease, transform .4s ease;
     padding: .5rem .2rem;
     margin-right: 1rem;
     background-color: #FF6498;

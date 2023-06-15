@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import colage from '../../public/image/colage.png';
 import HelloPart from "./External/HelloPart";
+import {Link} from "react-router-dom";
 
 class FirstPage extends Component {
     render() {
@@ -12,13 +12,13 @@ class FirstPage extends Component {
                 </div>
                 <div className='logIn'>
                     <ul className="ulLogin hidden lg:flex flex-column items-center z-10 pr-10">
-                        <button>
+                        <Link className='ulLoginButton' to='/register'>
                             <a>РЕГИСТРАЦИЯ</a>
-                        </button>
+                        </Link>
 
-                        <button>
+                        <Link className='ulLoginButton' to='/login'>
                             <a>ВХОД</a>
-                        </button>
+                        </Link>
                     </ul>
                 </div>
             </div>

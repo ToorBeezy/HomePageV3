@@ -1,15 +1,16 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import {Routes, Route} from "react-router-dom";
 
 import Header from "./components/layout/Header.js";
 import Footer from "./components/layout/Footer.js";
 import FirstPage from "./components/FirstPage"
-import LoginPage from "./components/LoginPage";
+import RegisterPage from "./components/RegisterPage";
 import Profile from "./components/Profile";
 import LogOutPage from "./components/LogOutPage";
 import TeamRegister from "./components/TeamRegister";
 import TeamProfile from "./components/TeamProfile";
-import Finder from "./components/Finder/Finder";
+import Finder from "./components/Finder";
 
 import styles from './styles/HomeModule.css';
 import "./styles/index.css";
@@ -25,29 +26,29 @@ import "./styles/External/UserMinimalisticProfile.css"
 import "./styles/pages/Finder/Finder.css"
 import "./styles/pages/Finder/TeamFinder.css"
 import "./styles/pages/Finder/UserFinder.css"
-import { BrowserRouter as Router } from "react-router-dom";
 
 function App() {
 
   return (
-      <Router>
           <div className={styles.container}>
 
               <main className={styles.main}>
                   <Header/>
-                  {/*<FirstPage/>*/}
-                  {/*<LoginPage/>*/}
-                  {/*<Profile/>*/}
-                  {/*<LogOutPage/>*/}
-                  {/*<TeamRegister/>*/}
-                  {/*<TeamProfile/>*/}
-                  <Finder/>
+
+                  <Routes>
+                      <Route path="/" element={ <FirstPage/> }/>
+                      <Route path="/register" element={ <RegisterPage/> }/>
+                      <Route path="/user" element={ <Profile/> }/>
+                      <Route path="/exit" element={ <LogOutPage/> }/>
+                      <Route path="/teamRegister" element={ <TeamRegister/> }/>
+                      <Route path="/team" element={ <TeamProfile/> }/>
+                      <Route path="/search" element={ <Finder/> }/>
+                  </Routes>
+
                   <Footer/>
               </main>
 
           </div>
-      </Router>
-
   );
 }
 

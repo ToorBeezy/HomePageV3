@@ -1,32 +1,43 @@
 import React, {Component} from 'react';
+import {Link} from "react-router-dom";
 
 class Header extends Component {
+    state = {
+        checkIfUserLogged: true,
+    }
+
     render() {
         return (
             <header className="w-full top-0 lg:py-2 lg:px-3 p-0 z-50">
                 <div className="container h-full max-w-full">
                     <nav className="flex justify-between">
-                        <a className="logo mr-0" href="/">
+                        <Link className="logo mr-0" to="/">
                             <a className="lg:p-0 p-1.5 lg:pl-3 pl-5 z-40">
                                 IntFolio
                             </a>
-                        </a>
+                        </Link>
 
                         <ul className="menu-left hidden lg:flex items-center z-10 pr-10">
                             <li className='ml-0'>
-                                <a href="/a1">
+                                <Link to="/user">
                                     <a>Мой профиль</a>
-                                </a>
+                                </Link>
                             </li>
                             <li>
-                                <a href="/a2">
+                                <Link to="/search">
                                     <a>Поиск</a>
-                                </a>
+                                </Link>
                             </li>
+                            {this.state.checkIfUserLogged &&
+                                <li>
+                                    <Link to="/teamRegister">
+                                        <a>Создать команду</a>
+                                    </Link>
+                                </li>}
                             <li className='mr-30'>
-                                <a href="/a3">
+                                <Link to="/exit">
                                     <a>Выход</a>
-                                </a>
+                                </Link>
                             </li>
                         </ul>
 

@@ -5,8 +5,9 @@ import {data} from "../Shared/ProfileRoles";
 import TgIco from "../../public/image/TelegramIco.png";
 import VkIco from "../../public/image/Vector(1).png";
 import Slider from "./widgets/Slider/Slider";
+import {Link} from "react-router-dom";
 
-class LoginPage extends Component {
+class RegisterPage extends Component {
     constructor(props){
         super(props);
         this.state = {
@@ -199,13 +200,13 @@ class LoginPage extends Component {
                 </div>
 
                 <div className='mx-auto w-max'>
-                    <a className="register_okButton">
+                    <Link to='/user' className="register_okButton">
                         ГОТОВО
-                    </a>
+                    </Link>
                 </div>
             </div>
         );
     }
 }
 
-export default LoginPage;
+export default RegisterPage;

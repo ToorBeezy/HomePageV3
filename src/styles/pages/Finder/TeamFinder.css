@@ -35,7 +35,7 @@
 
 .teamFinder_backArrow{
     position: absolute;
-    padding-left: 13rem;
-    padding-top: 1.4rem;
+    margin-left: 15rem;
+    margin-top: 2rem;
     transform: scale(150%);
 }

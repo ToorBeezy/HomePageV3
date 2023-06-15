@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {Link} from "react-router-dom";
 
 class LogOutPage extends Component {
 
@@ -13,13 +14,13 @@ class LogOutPage extends Component {
                 </div>
 
                 <div className='flex flex-col text-center mx-auto'>
-                    <button className="logOutButton" type="submit">
+                    <Link to='/' className="logOutButton" type="submit">
                         ДА
-                    </button>
+                    </Link>
 
-                    <button className="logOutButton" type="submit">
+                    <Link to='/' className="logOutButton" type="submit">
                         НЕТ
-                    </button>
+                    </Link>
                 </div>
             </div>
         );

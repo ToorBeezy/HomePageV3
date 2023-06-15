@@ -6,6 +6,7 @@ import TgIco from "../../public/image/TelegramIco.png";
 import VkIco from "../../public/image/Vector(1).png";
 import Slider from "./widgets/Slider/Slider";
 import UserMinimalisticProfile from "./External/UserMinimalisticProfile";
+import {Link} from "react-router-dom";
 
 class TeamRegister extends Component {
     state = {
@@ -206,9 +207,9 @@ class TeamRegister extends Component {
                 </div>
 
                 <div className='mx-auto w-max'>
-                    <a className="register_okButton">
+                    <Link to='/team' className="register_okButton">
                         ГОТОВО
-                    </a>
+                    </Link>
                 </div>
             </div>
         );

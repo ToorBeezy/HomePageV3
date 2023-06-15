@@ -10,8 +10,10 @@ const UserMinimalisticProfile = ({name, about, rolesArr, ifFind = false}) => {
 
     return (
         <div className='m-8 mb-16 flex'>
-            <div className='minProfile_avatar pr-20'>
-                <img className='minProfile_avatarImg' src={avatar}/>
+            <div className='minProfile_avatar mr-20'>
+                <a href='/id/123'>
+                    <img className='minProfile_avatarImg' src={avatar}/>
+                </a>
             </div>
 
             <div className='minProfile_infoContainer flex flex-col'>

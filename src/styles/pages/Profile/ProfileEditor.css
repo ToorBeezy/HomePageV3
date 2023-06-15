@@ -4,6 +4,7 @@
 }
 
 .role_list {
+    transition: background-color .4s ease;
     padding: 8px 12px;
     border-bottom: 2px solid #0A2893;
 }
