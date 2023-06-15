@@ -43,7 +43,7 @@ class Profile extends Component {
     handleDropdownClick = () =>{
         this.setState(state => {
             return{
-                dropdownState: !state.dropdownState
+                dropdownState: true
             }
         })
     }
@@ -79,29 +79,31 @@ class Profile extends Component {
 
     addRole = (name) => {
         const temp = [...this.state.rolesArr]
-        let role = {
-            id: 0,
-            name: ""
-        }
-        if((name === "Гейм-дизайнер") && (!temp.some(e => e.name === "Гейм-дизайнер")))
+        let role;
+        if((name === "гейм-дизайнер") && (!temp.some(e => e.name === "гейм-дизайнер")))
             role = {
                 id: this.state.rolesArr.length + 1,
-                name: "Гейм-дизайнер"
+                name: "гейм-дизайнер"
             }
-        else if((name === "Разработчик") && (!temp.some(e => e.name === "Разработчик")))
+        else if((name === "разработчик") && (!temp.some(e => e.name === "разработчик")))
             role = {
                 id: this.state.rolesArr.length + 1,
-                name: "Разработчик"
+                name: "разработчик"
             }
-        else if((name === "Дизайнер") && (!temp.some(e => e.name === "Дизайнер")))
+        else if((name === "дизайнер") && (!temp.some(e => e.name === "дизайнер")))
             role = {
                 id: this.state.rolesArr.length + 1,
-                name: "Дизайнер"
+                name: "дизайнер"
             }
-        else if((name === "Тимлид") && (!temp.some(e => e.name === "Тимлид")))
+        else if((name === "тимлид") && (!temp.some(e => e.name === "тимлид")))
             role = {
                 id: this.state.rolesArr.length + 1,
-                name: "Тимлид"
+                name: "тимлид"
+            }
+        else if((name === "аналитик") && (!temp.some(e => e.name === "аналитик")))
+            role = {
+                id: this.state.rolesArr.length + 1,
+                name: "аналитик"
             }
         else{
             return
@@ -176,10 +178,11 @@ class Profile extends Component {
                                 {this.state.dropdownState && (
                                     <div className='dropdown'>
                                         <ul className='roleContainer_list absolute top-20 right-0'>
-                                            <button onClick={() => this.addRole("Гейм-дизайнер")} className='role_list w-full'>Гейм-дизайнер</button>
-                                            <button onClick={() => this.addRole("Разработчик")} className='role_list w-full'>Разработчик</button>
-                                            <button onClick={() => this.addRole("Дизайнер")} className='role_list w-full'>Дизайнер</button>
-                                            <button onClick={() => this.addRole("Тимлид")} className='role_list w-full'>Тимлид</button>
+                                            <button onClick={() => this.addRole("гейм-дизайнер")} className='role_list w-full'>гейм-дизайнер</button>
+                                            <button onClick={() => this.addRole("разработчик")} className='role_list w-full'>разработчик</button>
+                                            <button onClick={() => this.addRole("дизайнер")} className='role_list w-full'>дизайнер</button>
+                                            <button onClick={() => this.addRole("тимлид")} className='role_list w-full'>тимлид</button>
+                                            <button onClick={() => this.addRole("аналитик")} className='role_list w-full'>аналитик</button>
                                         </ul>
                                     </div>
                                 )}

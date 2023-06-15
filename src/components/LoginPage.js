@@ -123,7 +123,7 @@ class LoginPage extends Component {
                 <div className='flex flex-col text-center mb-20 mx-auto w-full'>
                     <div className='pickRolesText mx-auto px-5 mb-10'>
                         <h1>
-                            Укажите, кого вы ищете в свою команду
+                            Укажите роль/роли, которые вы хотите занимать в проекте
                         </h1>
                     </div>
 

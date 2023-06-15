@@ -7,7 +7,7 @@ class LogOutPage extends Component {
         return (
             <div className='logOutPage h-screen flex flex-col text-center mx-auto'>
                 <div className='my-16'>
-                    <h1 className='text-5xl font-light'>
+                    <h1 className='text-5xl'>
                         Вы уверены, что хотите выйти?
                     </h1>
                 </div>
