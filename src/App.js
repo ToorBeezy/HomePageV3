@@ -26,6 +26,7 @@ import "./styles/External/UserMinimalisticProfile.css"
 import "./styles/pages/Finder/Finder.css"
 import "./styles/pages/Finder/TeamFinder.css"
 import "./styles/pages/Finder/UserFinder.css"
+import LoginPage from "./components/LoginPage";
 
 function App() {
 
@@ -43,6 +44,7 @@ function App() {
                       <Route path="/teamRegister" element={ <TeamRegister/> }/>
                       <Route path="/team" element={ <TeamProfile/> }/>
                       <Route path="/search" element={ <Finder/> }/>
+                      <Route path="/login" element={ <LoginPage/> }/>
                   </Routes>
 
                   <Footer/>

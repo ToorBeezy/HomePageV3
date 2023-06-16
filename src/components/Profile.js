@@ -281,7 +281,7 @@ class Profile extends Component {
                         </div>
 
                         <div className='flex mb-12'>
-                            <div className='profileName text-5xl font-light text-left ml-12 mr-24'>
+                            <div className='profileName text-5xl font-light text-left ml-12'>
                                 <h1>{this.state.name}</h1>
                             </div>
 
