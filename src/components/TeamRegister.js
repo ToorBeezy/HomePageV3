@@ -7,6 +7,7 @@ import VkIco from "../../public/image/Vector(1).png";
 import Slider from "./widgets/Slider/Slider";
 import UserMinimalisticProfile from "./External/UserMinimalisticProfile";
 import {Link} from "react-router-dom";
+import plusRoles from "../../public/image/plusRoles.png";
 
 class TeamRegister extends Component {
     state = {
@@ -17,6 +18,23 @@ class TeamRegister extends Component {
         workExample: null,
         rolesArr: data,
         teamAbout: "",
+        dropdownState: false,
+    }
+
+    handleDropdownClick = () =>{
+        this.setState(state => {
+            return{
+                dropdownState: true
+            }
+        })
+    }
+
+    deleteRole = (pos) => {
+        const temp = [...this.state.rolesArr];
+        temp.splice(pos, 1)
+        this.setState({
+            rolesArr: temp
+        })
     }
 
     auto_grow = (element) => {
@@ -32,6 +50,55 @@ class TeamRegister extends Component {
             });
         }
     };
+
+    addRole = (name) => {
+        const temp = [...this.state.rolesArr]
+        let role;
+        if((name === "гейм-дизайнер") && (!temp.some(e => e.name === "гейм-дизайнер")))
+            role = {
+                id: this.state.rolesArr.length + 1,
+                name: "гейм-дизайнер"
+            }
+        else if((name === "разработчик") && (!temp.some(e => e.name === "разработчик")))
+            role = {
+                id: this.state.rolesArr.length + 1,
+                name: "разработчик"
+            }
+        else if((name === "дизайнер") && (!temp.some(e => e.name === "дизайнер")))
+            role = {
+                id: this.state.rolesArr.length + 1,
+                name: "дизайнер"
+            }
+        else if((name === "тимлид") && (!temp.some(e => e.name === "тимлид")))
+            role = {
+                id: this.state.rolesArr.length + 1,
+                name: "тимлид"
+            }
+        else if((name === "аналитик") && (!temp.some(e => e.name === "аналитик")))
+            role = {
+                id: this.state.rolesArr.length + 1,
+                name: "аналитик"
+            }
+        else{
+            return
+        }
+
+        temp.push(role);
+        this.setState({
+            rolesArr: temp
+        })
+    }
+
+    hide = (e) => {
+        if(e && e.relatedTarget){
+            e.relatedTarget.click();
+        }
+        this.setState(state => {
+            return{
+                dropdownState: !state.dropdownState
+            }
+        })
+    }
 
     addTeamMembersArr = event => {
         const temp = [...this.state.teamMembersArr]
@@ -64,8 +131,8 @@ class TeamRegister extends Component {
 
     render() {
 
-        const rolesList = this.state.rolesArr.map((role) =>
-            <button className='pickRoleContainer' key={role.id}>
+        const rolesList = this.state.rolesArr.map((role, pos) =>
+            <button onClick={() => this.deleteRole(pos)} className='roleContainer' key={role.id}>
                 {role.name}
             </button>);
 
@@ -121,8 +188,23 @@ class TeamRegister extends Component {
                         </h1>
                     </div>
 
-                    <div className='w-full font-light'>
+                    <div className='w-full flex mx-auto text-center justify-center font-light'>
                         {rolesList}
+                        {this.state.dropdownState && (
+                            <div className='dropdown'>
+                                <ul className='roleContainer_list absolute top-20 right-0'>
+                                    <button onClick={() => this.addRole("гейм-дизайнер")} className='role_list w-full'>гейм-дизайнер</button>
+                                    <button onClick={() => this.addRole("разработчик")} className='role_list w-full'>разработчик</button>
+                                    <button onClick={() => this.addRole("дизайнер")} className='role_list w-full'>дизайнер</button>
+                                    <button onClick={() => this.addRole("тимлид")} className='role_list w-full'>тимлид</button>
+                                    <button onClick={() => this.addRole("аналитик")} className='role_list w-full'>аналитик</button>
+                                </ul>
+                            </div>
+                        )}
+                        {this.state.rolesArr.length < 5 &&
+                            <button className='ml-5 mt-2' onBlur={this.hide} onClick={this.handleDropdownClick}>
+                                <img src={plusRoles}/>
+                            </button>}
                     </div>
                 </div>
 

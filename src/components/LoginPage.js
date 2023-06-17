@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import { useNavigate } from 'react-router-dom';
-import colage from "../../public/image/colage.png";
+import axios from "axios";
+import validator from "validator";
 import HelloPart from "./External/HelloPart";
 
 const LoginPage = () => {

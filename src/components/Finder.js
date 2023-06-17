@@ -163,7 +163,7 @@ class Finder extends Component {
             </button>);
 
         const teamsExamples = teamsExample.map((team) => {
-            const namesOfTeam = team.roles.map(teamRole => teamRole.name);
+            const namesOfTeam = team.groups.map(teamRole => teamRole.name);
             const namesOfTemp = this.state.teamRolesArr.map(teamRole => teamRole.name);
 
             return(
@@ -173,14 +173,14 @@ class Finder extends Component {
                     key={team.id}
                     name={team.name}
                     about={team.about}
-                    rolesArr={team.roles}
+                    rolesArr={team.groups}
                     ifFind={team.ifFind}/>
             )
             }
         );
 
         const usersExamples = teamsExample.map((user) => {
-                const namesOfTeam = user.roles.map(teamRole => teamRole.name);
+                const namesOfTeam = user.groups.map(teamRole => teamRole.name);
                 const namesOfTemp = this.state.userRolesArr.map(userRole => userRole.name);
 
                 return(
@@ -190,7 +190,7 @@ class Finder extends Component {
                         key={user.id}
                         name={user.name}
                         about={user.about}
-                        rolesArr={user.roles}/>
+                        rolesArr={user.groups}/>
                 )
             }
         );

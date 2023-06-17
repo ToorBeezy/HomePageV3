@@ -4,7 +4,7 @@ export const teamsExample = [
         name: "Zakarev all",
         about: "Я умею смеяться и веселиться V прошлом семестре по предмету опд получила 97 баллов",
         ifFind: true,
-        roles: [
+        groups: [
             {
                 id: 0,
                 name: "гейм-дизайнер"
@@ -32,7 +32,7 @@ export const teamsExample = [
         name: "Zakarev three",
         about: "Я умею смеяться и веселиться V прошлом семестре по предмету опд получила 97 баллов",
         ifFind: true,
-        roles: [
+        groups: [
             {
                 id: 0,
                 name: "гейм-дизайнер"
@@ -56,7 +56,7 @@ export const teamsExample = [
         name: "Zakarev first",
         about: "Я умею смеяться и веселиться V прошлом семестре по предмету опд получила 97 баллов",
         ifFind: true,
-        roles: [
+        groups: [
             {
                 id: 0,
                 name: "гейм-дизайнер"
@@ -68,7 +68,7 @@ export const teamsExample = [
         name: "Zakarev second",
         about: "Я умею смеяться и веселиться V прошлом семестре по предмету опд получила 97 баллов",
         ifFind: true,
-        roles: [
+        groups: [
             {
                 id: 1,
                 name: "разработчик"
@@ -80,7 +80,7 @@ export const teamsExample = [
         name: "Zakarev fifth",
         about: "Я умею смеяться и веселиться V прошлом семестре по предмету опд получила 97 баллов",
         ifFind: true,
-        roles: [
+        groups: [
             {
                 id: 4,
                 name: "аналитик"
@@ -92,7 +92,7 @@ export const teamsExample = [
         name: "Zakarev fourth",
         about: "Я умею смеяться и веселиться V прошлом семестре по предмету опд получила 97 баллов",
         ifFind: true,
-        roles: [
+        groups: [
             {
                 id: 3,
                 name: "тимлид"

@@ -6,7 +6,6 @@ import VkIco from '../../public/image/Vector(1).png'
 import TgIco from '../../public/image/TelegramIco.png'
 import Editor from '../../public/image/Editor.png';
 import plusRoles from '../../public/image/plusRoles.png'
-import {data} from "../Shared/ProfileRoles";
 import Slider from "./widgets/Slider/Slider";
 import plusProfileAvatar from "../../public/image/plusRoles.png";
 
@@ -14,13 +13,13 @@ class Profile extends Component {
     state = {
         flag: false,
         dropdownState: false,
-        rolesArr: data,
+        rolesArr: this.props.roles,
         worksExampleArr: [],
         editNameFlag: false,
-        name: "Kurochkina Darya Nikolaevna",
-        about: "Я умею смеяться и веселиться. В прошлом семестре по предмету опд получила 97 баллов",
-        vk: "",
-        tg: "",
+        name: this.props.username,
+        about: this.props.about,
+        vk: this.props.vkLink,
+        tg: this.props.tgLink,
     }
 
     switchNameRedactor = () => {
@@ -186,9 +185,10 @@ class Profile extends Component {
                                         </ul>
                                     </div>
                                 )}
-                                <button onBlur={this.hide} onClick={this.handleDropdownClick}>
-                                    <img src={plusRoles}/>
-                                </button>
+                                {this.state.rolesArr.length < 5 &&
+                                    <button onBlur={this.hide} onClick={this.handleDropdownClick}>
+                                        <img src={plusRoles}/>
+                                    </button>}
 
                             </div>
                         </div>
