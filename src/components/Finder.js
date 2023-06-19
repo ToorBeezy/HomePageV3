@@ -2,23 +2,66 @@ import React, {Component} from 'react';
 import colage from "../../public/image/colage.png";
 import character from "../../public/image/character_man.png"
 import arrow from "../../public/image/Vector.svg"
-import {data} from "../Shared/ProfileRoles";
 import plusRoles from "../../public/image/plusRoles.png";
 import UserMinimalisticProfile from "./External/UserMinimalisticProfile";
-import {teamsExample} from "../Shared/teamsExample";
+import axios from "axios";
 
 class Finder extends Component {
     state = {
-        teamFinderFlag: false,
+        teamFinderFlag: true,
         userFinderFlag: false,
         dropdownState: false,
-        teamRolesArr: data,
-        userRolesArr: data,
+        teamRolesArr: [],
+        userRolesArr: [],
+        loading: false,
+        users: [],
+        teams: [],
+    }
+
+    CheckRolesByNumber = (number) => {
+        if(number === 1) return "гейм-дизайнер"
+        else if(number === 2) return "разработчик"
+        else if(number === 3) return "дизайнер"
+        else if(number === 4) return "тимлид"
+        else if(number === 5) return "аналитик"
     }
 
     checkIfAnyElementInArr = (arr1, arr2) => {
         return arr1.some(r => arr2.includes(r));
     };
+
+    componentDidMount() {
+        let userData
+        let teamData
+        axios.get('http://localhost:8000/users/')
+            .then(res => {
+                userData = res.data
+                this.setState({
+                    users: userData
+                });
+            })
+            .catch(err => console.log(err))
+            .finally(() => {
+                this.setState({
+                    loading: true
+                });
+            })
+
+        axios.get('http://localhost:8000/teams/')
+            .then(res => {
+                teamData = res.data
+                this.setState({
+                    teams: teamData
+                });
+            })
+            .catch(err => console.log(err))
+            .finally(() => {
+                this.setState({
+                    loading: true
+                });
+            })
+    }
+
 
 
     switchTeamFinderFlag = () => {
@@ -162,25 +205,27 @@ class Finder extends Component {
                 {role.name}
             </button>);
 
-        const teamsExamples = teamsExample.map((team) => {
-            const namesOfTeam = team.groups.map(teamRole => teamRole.name);
+        const teamsExamples = this.state.teams.map((team) => {
+            const namesOfTeam = [];
+            (team.groups.map(teamRole => teamRole)).forEach(e => namesOfTeam.push(this.CheckRolesByNumber(e)));
             const namesOfTemp = this.state.teamRolesArr.map(teamRole => teamRole.name);
-
+            console.log(namesOfTeam)
             return(
                 this.checkIfAnyElementInArr(namesOfTemp, namesOfTeam) &&
 
                 <UserMinimalisticProfile
                     key={team.id}
-                    name={team.name}
+                    name={team.title}
                     about={team.about}
-                    rolesArr={team.groups}
-                    ifFind={team.ifFind}/>
+                    rolesArr={namesOfTeam}
+                    ifFind={team.isFind}
+                    avatar={team.image}/>
             )
             }
         );
 
-        const usersExamples = teamsExample.map((user) => {
-                const namesOfTeam = user.groups.map(teamRole => teamRole.name);
+        const usersExamples = this.state.users.map((user) => {
+                const namesOfTeam = user.group_names.map(teamRole => teamRole);
                 const namesOfTemp = this.state.userRolesArr.map(userRole => userRole.name);
 
                 return(
@@ -188,9 +233,10 @@ class Finder extends Component {
 
                     <UserMinimalisticProfile
                         key={user.id}
-                        name={user.name}
-                        about={user.about}
-                        rolesArr={user.groups}/>
+                        name={user.additional_info.name}
+                        about={user.additional_info.about}
+                        rolesArr={user.group_names}
+                        avatar={user.additional_info.image}/>
                 )
             }
         );
@@ -198,184 +244,188 @@ class Finder extends Component {
 
 
         return (
-            <div className=''>
-                <div className='colage'>
-                    <img className='w-full' src={colage}  alt=''/>
-                </div>
-
-                {!this.state.teamFinderFlag && !this.state.userFinderFlag &&
-                    <div>
-                        <div className='finderContainer m-2'>
-                            <div className='finderMain flex flex-col text-center'>
-                                <div className='finderText mx-auto mt-32 mb-12'>
-                                    <h1>
-                                        Кого вы хотите найти?
-                                    </h1>
-                                </div>
-
-                                <div className='flex justify-center text-center gap-20'>
-                                    <button
-                                        className='chooseWhoFind flex-col flex justify-center'
-                                        onClick={this.switchUserFinderFlag}>
-                                        <h1 className='text-3xl font-light'>
-                                            Участника
-                                        </h1>
-
-                                        <div className='pl-10'>
-                                            <img className='chooseImg ' src={character}/>
-                                        </div>
-                                    </button>
-
-                                    <button
-                                        className='chooseWhoFind cursor-pointer flex-col flex justify-center'
-                                        onClick={this.switchTeamFinderFlag}>
-                                        <h1 className='cursor-default text-3xl font-light'>
-                                            Команду
-                                        </h1>
-
-                                        <div className='pl-10'>
-                                            <img className='chooseImg ' src={character}/>
-                                        </div>
-                                    </button>
-                                </div>
-                            </div>
+            <div>
+                {this.state.loading &&
+                    <div className=''>
+                        <div className='colage'>
+                            <img className='w-full' src={colage} alt=''/>
                         </div>
-                    </div>
-                }
 
-                {this.state.teamFinderFlag &&
-                    <div>
-                        <div className='flex flex-col text-center mb-96'>
-                            <div className='flex'>
-                                <button
-                                    onClick={() => {
-                                        this.setState(state => {
-                                            return {
-                                                teamFinderFlag: false
-                                            }
-                                        })
-                                    }}
-                                    className='teamFinder_backArrow'>
-
-                                    <img src={arrow}/>
-                                </button>
-
-                                <div className='teamFinderText font-light mx-auto mb-12'>
-                                    <h1>
-                                        Поиск команды
-                                    </h1>
-                                </div>
-                            </div>
-
-                            <div className='text-4xl flex mx-auto text-center font-light mb-6'>
-                                <h1>
-                                    Укажите, какие у вас роли
-                                </h1>
-                                {this.state.teamRolesArr.length < 5 &&
-                                    <button className='ml-5 mt-2' onBlur={this.hide} onClick={this.handleDropdownClick}>
-                                        <img src={plusRoles}/>
-                                    </button>}
-                            </div>
-
-                            <div className='roles juswtify-left flex mx-auto mb-10'>
-                                {teamRolesList}
-                                {this.state.dropdownState && (
-                                    <div className='dropdown'>
-                                        <ul className='roleContainer_list absolute top-0'>
-                                            <button onClick={() => this.addTeamRole("гейм-дизайнер")}
-                                                    className='role_list w-full'>гейм-дизайнер
-                                            </button>
-                                            <button onClick={() => this.addTeamRole("разработчик")}
-                                                    className='role_list w-full'>разработчик
-                                            </button>
-                                            <button onClick={() => this.addTeamRole("дизайнер")}
-                                                    className='role_list w-full'>дизайнер
-                                            </button>
-                                            <button onClick={() => this.addTeamRole("тимлид")}
-                                                    className='role_list w-full'>тимлид
-                                            </button>
-                                            <button onClick={() => this.addTeamRole("аналитик")}
-                                                    className='role_list w-full'>аналитик
-                                            </button>
-                                        </ul>
-                                    </div>
-                                )}
-
-                            </div>
-
+                        {!this.state.teamFinderFlag && !this.state.userFinderFlag &&
                             <div>
-                                {teamsExamples}
-                            </div>
-                        </div>
-                    </div>}
+                                <div className='finderContainer m-2'>
+                                    <div className='finderMain flex flex-col text-center'>
+                                        <div className='finderText mx-auto mt-32 mb-12'>
+                                            <h1>
+                                                Кого вы хотите найти?
+                                            </h1>
+                                        </div>
 
-                {this.state.userFinderFlag &&
-                    <div>
-                        <div className='flex flex-col text-center mb-96'>
-                            <div className='flex'>
-                                <button
-                                    onClick={() => {
-                                        this.setState(state => {
-                                            return {
-                                                userFinderFlag: false
-                                            }
-                                        })
-                                    }}
-                                    className='teamFinder_backArrow'>
-                                    <img src={arrow}/>
+                                        <div className='flex justify-center text-center gap-20'>
+                                            <button
+                                                className='chooseWhoFind flex-col flex justify-center'
+                                                onClick={this.switchUserFinderFlag}>
+                                                <h1 className='text-3xl font-light'>
+                                                    Участника
+                                                </h1>
 
-                                </button>
+                                                <div className='pl-10'>
+                                                    <img className='chooseImg ' src={character}/>
+                                                </div>
+                                            </button>
 
-                                <div className='teamFinderText font-light mx-auto mb-12'>
-                                    <h1>
-                                        Поиск пользователя
-                                    </h1>
+                                            <button
+                                                className='chooseWhoFind cursor-pointer flex-col flex justify-center'
+                                                onClick={this.switchTeamFinderFlag}>
+                                                <h1 className='cursor-default text-3xl font-light'>
+                                                    Команду
+                                                </h1>
+
+                                                <div className='pl-10'>
+                                                    <img className='chooseImg ' src={character}/>
+                                                </div>
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+                        }
 
-                            <div className='text-4xl flex mx-auto text-center font-light mb-6'>
-                                <h1>
-                                    Укажите, кого вы ищете
-                                </h1>
-                                {this.state.userRolesArr.length < 5 &&
-                                    <button className='ml-5 mt-2' onBlur={this.hide} onClick={this.handleDropdownClick}>
-                                        <img src={plusRoles}/>
-                                    </button>}
-                            </div>
-
-                            <div className='roles juswtify-left flex mx-auto mb-10'>
-                                {userRolesList}
-                                {this.state.dropdownState && (
-                                    <div className='dropdown'>
-                                        <ul className='roleContainer_list absolute top-0'>
-                                            <button onClick={() => this.addUserRole("гейм-дизайнер")}
-                                                    className='role_list w-full'>гейм-дизайнер
-                                            </button>
-                                            <button onClick={() => this.addUserRole("разработчик")}
-                                                    className='role_list w-full'>разработчик
-                                            </button>
-                                            <button onClick={() => this.addUserRole("дизайнер")}
-                                                    className='role_list w-full'>дизайнер
-                                            </button>
-                                            <button onClick={() => this.addUserRole("тимлид")}
-                                                    className='role_list w-full'>тимлид
-                                            </button>
-                                            <button onClick={() => this.addUserRole("аналитик")}
-                                                    className='role_list w-full'>аналитик
-                                            </button>
-                                        </ul>
-                                    </div>
-                                )}
-                            </div>
-
+                        {this.state.teamFinderFlag &&
                             <div>
-                                {usersExamples}
-                            </div>
-                        </div>
-                    </div>}
+                                <div className='flex flex-col text-center mb-96'>
+                                    <div className='flex'>
+                                        <button
+                                            onClick={() => {
+                                                this.setState(state => {
+                                                    return {
+                                                        teamFinderFlag: false
+                                                    }
+                                                })
+                                            }}
+                                            className='teamFinder_backArrow'>
 
+                                            <img src={arrow}/>
+                                        </button>
 
+                                        <div className='teamFinderText font-light mx-auto mb-12'>
+                                            <h1>
+                                                Поиск команды
+                                            </h1>
+                                        </div>
+                                    </div>
+
+                                    <div className='text-4xl flex mx-auto text-center font-light mb-6'>
+                                        <h1>
+                                            Укажите, какие у вас роли
+                                        </h1>
+                                        {this.state.teamRolesArr.length < 5 &&
+                                            <button className='ml-5 mt-2' onBlur={this.hide}
+                                                    onClick={this.handleDropdownClick}>
+                                                <img src={plusRoles}/>
+                                            </button>}
+                                    </div>
+
+                                    <div className='roles juswtify-left flex mx-auto mb-10'>
+                                        {teamRolesList}
+                                        {this.state.dropdownState && (
+                                            <div className='dropdown'>
+                                                <ul className='roleContainer_list absolute top-0'>
+                                                    <button onClick={() => this.addTeamRole("гейм-дизайнер")}
+                                                            className='role_list w-full'>гейм-дизайнер
+                                                    </button>
+                                                    <button onClick={() => this.addTeamRole("разработчик")}
+                                                            className='role_list w-full'>разработчик
+                                                    </button>
+                                                    <button onClick={() => this.addTeamRole("дизайнер")}
+                                                            className='role_list w-full'>дизайнер
+                                                    </button>
+                                                    <button onClick={() => this.addTeamRole("тимлид")}
+                                                            className='role_list w-full'>тимлид
+                                                    </button>
+                                                    <button onClick={() => this.addTeamRole("аналитик")}
+                                                            className='role_list w-full'>аналитик
+                                                    </button>
+                                                </ul>
+                                            </div>
+                                        )}
+
+                                    </div>
+
+                                    <div>
+                                        {teamsExamples}
+                                    </div>
+                                </div>
+                            </div>}
+
+                        {this.state.userFinderFlag &&
+                            <div>
+                                <div className='flex flex-col text-center mb-96'>
+                                    <div className='flex'>
+                                        <button
+                                            onClick={() => {
+                                                this.setState(state => {
+                                                    return {
+                                                        userFinderFlag: false
+                                                    }
+                                                })
+                                            }}
+                                            className='teamFinder_backArrow'>
+                                            <img src={arrow}/>
+
+                                        </button>
+
+                                        <div className='teamFinderText font-light mx-auto mb-12'>
+                                            <h1>
+                                                Поиск пользователя
+                                            </h1>
+                                        </div>
+                                    </div>
+
+                                    <div className='text-4xl flex mx-auto text-center font-light mb-6'>
+                                        <h1>
+                                            Укажите, кого вы ищете
+                                        </h1>
+                                        {this.state.userRolesArr.length < 5 &&
+                                            <button className='ml-5 mt-2' onBlur={this.hide}
+                                                    onClick={this.handleDropdownClick}>
+                                                <img src={plusRoles}/>
+                                            </button>}
+                                    </div>
+
+                                    <div className='roles juswtify-left flex mx-auto mb-10'>
+                                        {userRolesList}
+                                        {this.state.dropdownState && (
+                                            <div className='dropdown'>
+                                                <ul className='roleContainer_list absolute top-0'>
+                                                    <button onClick={() => this.addUserRole("гейм-дизайнер")}
+                                                            className='role_list w-full'>гейм-дизайнер
+                                                    </button>
+                                                    <button onClick={() => this.addUserRole("разработчик")}
+                                                            className='role_list w-full'>разработчик
+                                                    </button>
+                                                    <button onClick={() => this.addUserRole("дизайнер")}
+                                                            className='role_list w-full'>дизайнер
+                                                    </button>
+                                                    <button onClick={() => this.addUserRole("тимлид")}
+                                                            className='role_list w-full'>тимлид
+                                                    </button>
+                                                    <button onClick={() => this.addUserRole("аналитик")}
+                                                            className='role_list w-full'>аналитик
+                                                    </button>
+                                                </ul>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div>
+                                        {usersExamples}
+                                    </div>
+                                </div>
+                            </div>}
+                </div>}
             </div>
+
         );
     }
 }

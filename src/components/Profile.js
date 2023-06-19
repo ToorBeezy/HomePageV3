@@ -129,7 +129,7 @@ class Profile extends Component {
 
         const rolesList = this.state.rolesArr.map((role, pos) =>
             <button onClick={() => this.deleteRole(pos)} className='roleContainer' key={role.id}>
-                {role.name}
+                {role}
             </button>);
 
 

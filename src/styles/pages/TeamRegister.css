@@ -75,3 +75,20 @@
 .register_okButton:hover {
     color: #FF7EA9;
 }
+
+.teamRegister_findUserByLoginInput{
+    outline: none;
+    border: 3px solid #446DFF;
+    border-radius: 10px;
+}
+
+.teamRegister_findUserByLoginButton{
+    border: 3px solid #446DFF;
+    border-radius: 10px;
+    transition: color .4s ease, transform .4s ease
+}
+
+.teamRegister_findUserByLoginButton:hover{
+    transform: scale(105%);
+    color: #FF6498;
+}

@@ -8,6 +8,9 @@ import Slider from "./widgets/Slider/Slider";
 import UserMinimalisticProfile from "./External/UserMinimalisticProfile";
 import {Link} from "react-router-dom";
 import plusRoles from "../../public/image/plusRoles.png";
+import axios from "axios";
+import Popup from "reactjs-popup";
+import _ from 'lodash'
 
 class TeamRegister extends Component {
     state = {
@@ -19,7 +22,62 @@ class TeamRegister extends Component {
         rolesArr: data,
         teamAbout: "",
         dropdownState: false,
+        users: [],
+        loading: true,
+        findUserByLogin: "",
+        usersForTeamMembersById: [],
+        loadingById: false,
+        usersGotById: [],
+        findMemberFlag: true,
+        addMemberFlag: false,
     }
+
+    getUsersById = () => {
+        const arr = [...this.state.usersForTeamMembersById]
+        arr.map((id) => {
+            let userDataById;
+            const temp = [...this.state.usersGotById];
+            let url = 'http://localhost:8000/users/' + `${id}`
+            axios.get(url)
+                .then(res => {
+                    userDataById = res.data
+                    if(!(temp.some(e => _.isEqual(e, userDataById))))
+                        temp.push(userDataById)
+                    this.setState({
+                        usersGotById: temp
+                    })
+                })
+                .catch(err => console.log(err))
+                .finally(() => {
+                    this.setState({
+                        findMemberFlag: true,
+                        addMemberFlag: false,
+                    })
+                })
+        })
+    }
+
+    getUserIdByLogin = (login) => {
+        let userData;
+        const temp = new Set([...this.state.usersForTeamMembersById]);
+        const url = 'http://localhost:8000/usernames/' + `${login}`
+        axios.get(url)
+            .then(res => {
+                userData = res.data.id
+                temp.add(userData)
+                this.setState({
+                    usersForTeamMembersById: Array.from(temp)
+                });
+            })
+            .catch(err => console.log(err))
+            .finally(() => {
+                this.setState({
+                    findMemberFlag: false,
+                    addMemberFlag: true,
+                })
+            })
+    }
+
 
     handleDropdownClick = () =>{
         this.setState(state => {
@@ -128,171 +186,209 @@ class TeamRegister extends Component {
         }
     }
 
-
     render() {
-
         const rolesList = this.state.rolesArr.map((role, pos) =>
             <button onClick={() => this.deleteRole(pos)} className='roleContainer' key={role.id}>
                 {role.name}
             </button>);
 
-        const teamMembersList = this.state.teamMembersArr.map((member) =>
-            <UserMinimalisticProfile
-                name = {member.name}
-                about = {member.about}
-                rolesArr = {member.rolesArr} />);
+        const teamMembersList = this.state.usersGotById.map((user) => {
+            return(
+                <UserMinimalisticProfile
+                    key={user.id}
+                    name={user.additional_info.name}
+                    about={user.additional_info.about}
+                    rolesArr={user.group_names}
+                    avatar={user.additional_info.image}/>
+            );}
+            )
 
 
         return (
-            <div className='justify-center mb-36'>
-                <HelloPart/>
+            <div>
+                {this.state.loading &&
+                    <div className='justify-center mb-36'>
+                        <HelloPart/>
 
-                <div className='mx-auto w-max '>
-                    <a className="registerButton">
-                        Создайте свою команду
-                    </a>
-                </div>
-
-                <div className='my-16 mx-8'>
-                    <div className='mb-14'>
-                        <h1 className='text-4xl font-light mb-4'>
-                            Введите название вашей команды
-                        </h1>
-                        <input
-                            className='teamNameInput text-5xl leading-10 font-light w-1/2'
-                            type='text'
-                            value={this.state.teamName}
-                            onChange={(e) => this.setState({teamName:e.target.value})}/>
-                    </div>
-
-                    <div className='flex mb-4'>
-                        <h1 className='text-4xl font-light'>
-                            Добавить фотографию профиля команды
-                        </h1>
-                        <div className='plusProfileAvatar h-fit'>
-                            <input
-                                className='absolute cursor-pointer avatarInput w-6 opacity-0'
-                                type="file"
-                                name="myImage"
-                                onChange={this.onImageChange} />
-                            <img className='' src={plusProfileAvatar}/>
+                        <div className='mx-auto w-max '>
+                            <a className="registerButton">
+                                Создайте свою команду
+                            </a>
                         </div>
-                    </div>
-                    <img src={this.state.teamAvatar} />
-                </div>
 
-                <div className='flex flex-col text-center mb-20 mx-auto w-full'>
-                    <div className='pickRolesText px-5 mx-auto mb-10'>
-                        <h1>
-                            Укажите, кого вы ищете в свою команду
-                        </h1>
-                    </div>
-
-                    <div className='w-full flex mx-auto text-center justify-center font-light'>
-                        {rolesList}
-                        {this.state.dropdownState && (
-                            <div className='dropdown'>
-                                <ul className='roleContainer_list absolute top-20 right-0'>
-                                    <button onClick={() => this.addRole("гейм-дизайнер")} className='role_list w-full'>гейм-дизайнер</button>
-                                    <button onClick={() => this.addRole("разработчик")} className='role_list w-full'>разработчик</button>
-                                    <button onClick={() => this.addRole("дизайнер")} className='role_list w-full'>дизайнер</button>
-                                    <button onClick={() => this.addRole("тимлид")} className='role_list w-full'>тимлид</button>
-                                    <button onClick={() => this.addRole("аналитик")} className='role_list w-full'>аналитик</button>
-                                </ul>
+                        <div className='my-16 mx-8'>
+                            <div className='mb-14'>
+                                <h1 className='text-4xl font-light mb-4'>
+                                    Введите название вашей команды
+                                </h1>
+                                <input
+                                    className='teamNameInput text-5xl leading-10 font-light w-1/2'
+                                    type='text'
+                                    value={this.state.teamName}
+                                    onChange={(e) => this.setState({teamName:e.target.value})}/>
                             </div>
-                        )}
-                        {this.state.rolesArr.length < 5 &&
-                            <button className='ml-5 mt-2' onBlur={this.hide} onClick={this.handleDropdownClick}>
-                                <img src={plusRoles}/>
-                            </button>}
-                    </div>
-                </div>
 
-                <div className='flex flex-col justify-left ml-12 mb-12'>
-                    <div className='text-5xl font-light text-left'>
-                        <h1>
-                            Укажите информацию о вас:
-                        </h1>
-                    </div>
+                            <div className='flex mb-4'>
+                                <h1 className='text-4xl font-light'>
+                                    Добавить фотографию профиля команды
+                                </h1>
+                                <div className='plusProfileAvatar h-fit'>
+                                    <input
+                                        className='absolute cursor-pointer avatarInput w-6 opacity-0'
+                                        type="file"
+                                        name="myImage"
+                                        onChange={this.onImageChange} />
+                                    <img className='' src={plusProfileAvatar}/>
+                                </div>
+                            </div>
+                            <img src={this.state.teamAvatar} />
+                        </div>
 
-                    <div className='my-3 text-3xl w-5/6'>
+                        <div className='flex flex-col text-center mb-20 mx-auto w-full'>
+                            <div className='pickRolesText px-5 mx-auto mb-10'>
+                                <h1>
+                                    Укажите, кого вы ищете в свою команду
+                                </h1>
+                            </div>
+
+                            <div className='w-full flex mx-auto text-center justify-center font-light'>
+                                {rolesList}
+                                {this.state.dropdownState && (
+                                    <div className='dropdown'>
+                                        <ul className='roleContainer_list absolute top-20 right-0'>
+                                            <button onClick={() => this.addRole("гейм-дизайнер")} className='role_list w-full'>гейм-дизайнер</button>
+                                            <button onClick={() => this.addRole("разработчик")} className='role_list w-full'>разработчик</button>
+                                            <button onClick={() => this.addRole("дизайнер")} className='role_list w-full'>дизайнер</button>
+                                            <button onClick={() => this.addRole("тимлид")} className='role_list w-full'>тимлид</button>
+                                            <button onClick={() => this.addRole("аналитик")} className='role_list w-full'>аналитик</button>
+                                        </ul>
+                                    </div>
+                                )}
+                                {this.state.rolesArr.length < 5 &&
+                                    <button className='ml-5 mt-2' onBlur={this.hide} onClick={this.handleDropdownClick}>
+                                        <img src={plusRoles}/>
+                                    </button>}
+                            </div>
+                        </div>
+
+                        <div className='flex flex-col justify-left ml-12 mb-12'>
+                            <div className='text-5xl font-light text-left'>
+                                <h1>
+                                    Укажите информацию о вас:
+                                </h1>
+                            </div>
+
+                            <div className='my-3 text-3xl w-5/6'>
                         <textarea
                             className='aboutInput w-full'
                             value={this.state.teamAbout}
-                            onInput={() => this.auto_grow(document.querySelector('.aboutInput'))}
                             onChange={(e) => this.setState({teamAbout:e.target.value})}/>
-                    </div>
-                </div>
-
-                <div className='flex mb-20 ml-12'>
-                    <h1 className='text-4xl font-light'>
-                        Добавить фото примера работ
-                    </h1>
-
-                    <div className='plusProfileAvatar h-fit'>
-                        <input
-                            className='absolute cursor-pointer avatarInput w-6 opacity-0'
-                            type="file"
-                            name="myImage"
-                            onChange={this.addImageToWorksExampleArr} />
-                        <img className='' src={plusProfileAvatar}/>
-                    </div>
-                </div>
-
-                {this.state.worksExampleArr.length > 0 && <Slider Arr = {this.state.worksExampleArr}/>}
-
-                <div className='flex mb-16 ml-12'>
-                    <h1 className='text-4xl font-light'>
-                        Добавить участников команды
-                    </h1>
-
-                    <div className='plusProfileAvatar h-fit'>
-                        <button onClick={this.addTeamMembersArr}>
-                            <img src={plusProfileAvatar}/>
-                        </button>
-                    </div>
-                </div>
-
-                {teamMembersList}
-
-                <div className='ml-12 mb-24'>
-                    <div className='mb-12 text-5xl font-light'>
-                        <h1>
-                            Контакты:
-                        </h1>
-                    </div>
-                    <div className='ml-12 flex flex-col'>
-                        <div className='mb-12 flex'>
-                            <a>
-                                <img className='teamRegister_tgImg'  src={TgIco}/>
-                            </a>
-
-                            <input
-                                className='tgLink text-3xl font-light'
-                                placeholder='Вставьте ссылку'
-                                value={this.state.tg}
-                                onChange={(e) => this.setState({tg:e.target.value})}/>
+                            </div>
                         </div>
 
-                        <div className='flex'>
-                            <a>
-                                <img className='mr-16' src={VkIco}/>
-                            </a>
+                        <div className='flex mb-20 ml-12'>
+                            <h1 className='text-4xl font-light'>
+                                Добавить фото примера работ
+                            </h1>
 
-                            <input
-                                className='tgLink text-3xl font-light'
-                                placeholder='Вставьте ссылку'
-                                value={this.state.vk}
-                                onChange={(e) => this.setState({vk:e.target.value})}/>
+                            <div className='plusProfileAvatar h-fit'>
+                                <input
+                                    className='absolute cursor-pointer avatarInput w-6 opacity-0'
+                                    type="file"
+                                    name="myImage"
+                                    onChange={this.addImageToWorksExampleArr} />
+                                <img className='' src={plusProfileAvatar}/>
+                            </div>
+                        </div>
+
+                        {this.state.worksExampleArr.length > 0 && <Slider Arr = {this.state.worksExampleArr}/>}
+
+                        <div className='flex mb-16 ml-12'>
+                            <h1 className='text-4xl font-light'>
+                                Добавить участников команды
+                            </h1>
+
+                            <div className='plusProfileAvatar h-fit'>
+                                <Popup
+                                    trigger={
+                                    <button>
+                                        <img src={plusProfileAvatar}/>
+                                    </button>}
+                                    position="right center">
+                                    <div>
+                                        <div>
+                                            <h1 className='text-4xl cursor-default font-light'>
+                                                Введите логин участника:
+                                            </h1>
+                                        </div>
+
+                                        <div className='flex'>
+                                            <input
+                                                type='text'
+                                                className='teamRegister_findUserByLoginInput text-3xl font-light'
+                                                value={this.state.findUserByLogin}
+                                                onChange={(e) => this.setState({findUserByLogin:e.target.value})}
+                                            />
+                                            {this.state.findMemberFlag &&
+                                                <button
+                                                    className='teamRegister_findUserByLoginButton p-1 ml-2 text-3xl font-light'
+                                                    onClick={() => this.getUserIdByLogin(this.state.findUserByLogin)}>
+                                                    Найти
+                                                </button>}
+                                            {this.state.addMemberFlag &&
+                                                <button
+                                                    className='teamRegister_findUserByLoginButton p-1 ml-2 text-3xl font-light'
+                                                    onClick={() => this.getUsersById()}>
+                                                    Добавить
+                                                </button>}
+                                        </div>
+                                    </div>
+                                </Popup>
+                            </div>
+                        </div>
+
+                        {teamMembersList}
+
+                        <div className='ml-12 mb-24'>
+                            <div className='mb-12 text-5xl font-light'>
+                                <h1>
+                                    Контакты:
+                                </h1>
+                            </div>
+                            <div className='ml-12 flex flex-col'>
+                                <div className='mb-12 flex'>
+                                    <a>
+                                        <img className='teamRegister_tgImg'  src={TgIco}/>
+                                    </a>
+
+                                    <input
+                                        className='tgLink text-3xl font-light'
+                                        placeholder='Вставьте ссылку'
+                                        value={this.state.tg}
+                                        onChange={(e) => this.setState({tg:e.target.value})}/>
+                                </div>
+
+                                <div className='flex'>
+                                    <a>
+                                        <img className='mr-16' src={VkIco}/>
+                                    </a>
+
+                                    <input
+                                        className='tgLink text-3xl font-light'
+                                        placeholder='Вставьте ссылку'
+                                        value={this.state.vk}
+                                        onChange={(e) => this.setState({vk:e.target.value})}/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className='mx-auto w-max'>
+                            <Link to='/team' className="register_okButton">
+                                ГОТОВО
+                            </Link>
                         </div>
                     </div>
-                </div>
-
-                <div className='mx-auto w-max'>
-                    <Link to='/team' className="register_okButton">
-                        ГОТОВО
-                    </Link>
-                </div>
+                }
             </div>
         );
     }

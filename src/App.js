@@ -44,7 +44,6 @@ class App extends Component{
         axios.get('http://localhost:8000/users/')
             .then(res => {
                 userData = res.data
-                if(userData[0].username === "Lancelot") userData.shift()
                 this.setState({
                     users: userData
                 });

@@ -21,6 +21,7 @@ class RegisterPage extends Component {
             tg: "",
             vk: "",
             registerProfileAvatar: null,
+            registerProfileAvatarFile: null,
             registerWorkExample: null,
         }
     }
@@ -39,12 +40,11 @@ class RegisterPage extends Component {
     }
 
     onImageChange_register = event => {
-        if (event.target.files && event.target.files[0]) {
-            let img = event.target.files[0];
-            this.setState({
-                registerProfileAvatar: URL.createObjectURL(img)
-            });
-        }
+        let img = event.target.files[0];
+        this.setState({
+            registerProfileAvatar: URL.createObjectURL(img),
+            registerProfileAvatarFile: img
+        });
     };
 
     handleDropdownClick = () =>{
@@ -73,31 +73,21 @@ class RegisterPage extends Component {
     addRole = (name) => {
         const temp = [...this.state.rolesArr]
         let role;
-        if((name === "гейм-дизайнер") && (!temp.some(e => e.name === "гейм-дизайнер")))
-            role = {
-                id: this.state.rolesArr.length + 1,
-                name: "гейм-дизайнер"
-            }
-        else if((name === "разработчик") && (!temp.some(e => e.name === "разработчик")))
-            role = {
-                id: this.state.rolesArr.length + 1,
-                name: "разработчик"
-            }
-        else if((name === "дизайнер") && (!temp.some(e => e.name === "дизайнер")))
-            role = {
-                id: this.state.rolesArr.length + 1,
-                name: "дизайнер"
-            }
-        else if((name === "тимлид") && (!temp.some(e => e.name === "тимлид")))
-            role = {
-                id: this.state.rolesArr.length + 1,
-                name: "тимлид"
-            }
-        else if((name === "аналитик") && (!temp.some(e => e.name === "аналитик")))
-            role = {
-                id: this.state.rolesArr.length + 1,
-                name: "аналитик"
-            }
+        if((name === "гейм-дизайнер") && (!temp.some(e => e === "гейм-дизайнер")))
+            role = "гейм-дизайнер"
+
+        else if((name === "разработчик") && (!temp.some(e => e === "разработчик")))
+            role = "разработчик"
+
+        else if((name === "дизайнер") && (!temp.some(e => e === "дизайнер")))
+            role = "дизайнер"
+
+        else if((name === "тимлид") && (!temp.some(e => e === "тимлид")))
+            role = "тимлид"
+
+        else if((name === "аналитик") && (!temp.some(e => e === "аналитик")))
+            role = "аналитик"
+
         else{
             return
         }
@@ -119,39 +109,66 @@ class RegisterPage extends Component {
         })
     }
 
-    finishRegistration = event => {
-        event.preventDefault();
-
+    handleSubmit = (e) => {
+        e.preventDefault();
+        const uploadData = new FormData();
+        console.log(this.state.registerProfileAvatarFile)
+        uploadData.append('image', this.state.registerProfileAvatarFile)
+        console.log(uploadData);
         axios.post("http://localhost:8000/users/", {
             username: this.state.login,
+            group_names: this.state.rolesArr,
             additional_info: {
-                login: this.state.login,
+                image: uploadData,
+                name: this.state.registerName,
                 about: this.state.about,
                 vk: this.state.vk,
                 telegram: this.state.tg ,
-                user: 5
+                user: null,
+            },
+            headers: {
+                'content-type': 'multipart/form-data',
             },
             password: this.state.password
         }).then(res => {
-            if (res.data === true) {
-                let id = res.data.id
-                window.location.href = `http://localhost:3000/user/${id}`
-            } else {
-                alert("There is already a user with this login")
-            }
-        }).catch(() => {
-            alert("An error occurred on the server")
+            console.log(res.data)
+        }).catch((err) => {
+            console.log(err)
         })
     }
 
+    // handleSubmit = (e) => {
+    //     e.preventDefault();
+    //     let form_data = new FormData();
+    //     form_data.append('username', this.state.login);
+    //     form_data.append('group_names', this.state.rolesArr);
+    //     form_data.append('password', this.state.password);
+    //     form_data.append('additional_info.image', this.state.registerProfileAvatarFile, this.state.registerProfileAvatarFile.name);
+    //     form_data.append('additional_info.name', this.state.registerName);
+    //     form_data.append('additional_info.about', this.state.about);
+    //     form_data.append('additional_info.vk', this.state.vk);
+    //     form_data.append('additional_info.telegram', this.state.tg);
+    //     form_data.append('additional_info.user', null);
+    //     console.log(form_data);
+    //     let url = 'http://localhost:8000/users/';
+    //     axios.post(url, form_data, {
+    //         headers: {
+    //             'content-type': 'multipart/form-data'
+    //         }
+    //     })
+    //         .then(res => {
+    //             console.log(res.data);
+    //         })
+    //         .catch(err => console.log(err))
+    // };
 
 
 
     render() {
 
         const rolesList = this.state.rolesArr.map((role, pos) =>
-            <button onClick={() => this.deleteRole(pos)} className='roleContainer' key={role.id}>
-                {role.name}
+            <button type='button' onClick={() => this.deleteRole(pos)} className='roleContainer' key={pos}>
+                {role}
             </button>);
 
         return (
@@ -164,7 +181,7 @@ class RegisterPage extends Component {
                     </a>
                 </div>
 
-                <form onSubmit={this.finishRegistration}>
+                <form onSubmit={this.handleSubmit}>
                     <div className='my-16 mx-8'>
                         <div className='mb-8'>
                             <h1 className='text-4xl font-light mb-4'>
@@ -208,6 +225,7 @@ class RegisterPage extends Component {
                                     className='absolute cursor-pointer avatarInput w-6 opacity-0'
                                     type="file"
                                     name="myImage"
+                                    accept="image/png, image/jpeg"
                                     onChange={this.onImageChange_register} />
                                 <img src={plusProfileAvatar}/>
                             </div>
@@ -227,16 +245,16 @@ class RegisterPage extends Component {
                             {this.state.dropdownState && (
                                 <div className='dropdown'>
                                     <ul className='roleContainer_list absolute top-20 right-0'>
-                                        <button onClick={() => this.addRole("гейм-дизайнер")} className='role_list w-full'>гейм-дизайнер</button>
-                                        <button onClick={() => this.addRole("разработчик")} className='role_list w-full'>разработчик</button>
-                                        <button onClick={() => this.addRole("дизайнер")} className='role_list w-full'>дизайнер</button>
-                                        <button onClick={() => this.addRole("тимлид")} className='role_list w-full'>тимлид</button>
-                                        <button onClick={() => this.addRole("аналитик")} className='role_list w-full'>аналитик</button>
+                                        <button type='button' onClick={() => this.addRole("гейм-дизайнер")} className='role_list w-full'>гейм-дизайнер</button>
+                                        <button type='button' onClick={() => this.addRole("разработчик")} className='role_list w-full'>разработчик</button>
+                                        <button type='button' onClick={() => this.addRole("дизайнер")} className='role_list w-full'>дизайнер</button>
+                                        <button type='button' onClick={() => this.addRole("тимлид")} className='role_list w-full'>тимлид</button>
+                                        <button type='button' onClick={() => this.addRole("аналитик")} className='role_list w-full'>аналитик</button>
                                     </ul>
                                 </div>
                             )}
                             {this.state.rolesArr.length < 5 &&
-                                <button className='ml-5 mt-2' onBlur={this.hide} onClick={this.handleDropdownClick}>
+                                <button type='button' className='ml-5 mt-2' onBlur={this.hide} onClick={this.handleDropdownClick}>
                                     <img src={plusRoles}/>
                                 </button>}
                         </div>
@@ -309,11 +327,7 @@ class RegisterPage extends Component {
                     </div>
 
                     <div className='mx-auto w-max'>
-                        <input
-                            value='ГОТОВО'
-                            type='submit'
-                            to='/user'
-                            className="register_okButton"/>
+                        <input type='submit' value='ГОТОВО' className="register_okButton"/>
                     </div>
                 </form>
             </div>

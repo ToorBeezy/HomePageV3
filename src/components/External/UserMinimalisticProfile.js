@@ -1,18 +1,20 @@
 import React from 'react';
-import avatar from "../../../public/image/avatarExample.jpeg"
+import noAvatar from '../../../public/image/noAvatar.png'
 
-const UserMinimalisticProfile = ({name, about, rolesArr, ifFind = false}) => {
+const UserMinimalisticProfile = ({name, about, rolesArr, ifFind = false, avatar}) => {
+
+    const universalAvatar = (avatar !== null ? avatar : noAvatar)
 
     let rolesList = rolesArr.map(role =>
-        <div className='minProfile_roles cursor-default' key={role.id}>
-            {role.name}
+        <div className='minProfile_roles cursor-default'>
+            {role}
         </div>);
 
     return (
         <div className='m-8 mb-16 flex'>
             <div className='minProfile_avatar mr-20'>
                 <a href='/id/123'>
-                    <img className='minProfile_avatarImg' src={avatar}/>
+                    <img className='minProfile_avatarImg' src={universalAvatar}/>
                 </a>
             </div>
 
