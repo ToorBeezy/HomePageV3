@@ -16,6 +16,7 @@ class TeamRegister extends Component {
     state = {
         teamName: "",
         worksExampleArr: [],
+        worksExampleArrForReact: [],
         teamMembersArr: [],
         workExample: null,
         rolesArr: [],
@@ -31,6 +32,7 @@ class TeamRegister extends Component {
         profileAvatarAs64: "",
         findUserByLogin: "",
         arrForUsersId: [],
+        idTeam: "",
     }
 
     CheckRolesByNumber = (number) => {
@@ -72,6 +74,21 @@ class TeamRegister extends Component {
         }
     }
 
+    addImagesToWorkExamples = (id) => {
+        this.setState({
+            idTeam: id
+        })
+        this.state.worksExampleArr.forEach((image) => {
+            axios.post('http://localhost:8000/teamimages/', {
+                image: image,
+                team: id
+            })
+                .catch((err) => {
+                    console.log(err)
+                })
+        })
+    }
+
     handleSubmit = () => {
         axios.post("http://localhost:8000/teams/", {
             image: this.state.profileAvatarAs64,
@@ -83,7 +100,7 @@ class TeamRegister extends Component {
             groups: this.state.rolesArr,
             participants: this.state.arrForUsersId
         }).then(res => {
-            console.log(res.data)
+            this.addImagesToWorkExamples(res.data.id)
         }).catch((err) => {
             console.log(err)
         })
@@ -161,20 +178,27 @@ class TeamRegister extends Component {
         })
     }
 
-
-    addImageToWorksExampleArr = event => {
-        if (event.target.files && event.target.files[0]) {
-            const temp = [...this.state.worksExampleArr]
-            let tempImg = event.target.files[0]
-            let image = {
-                title: this.state.worksExampleArr.length + 1,
-                src: URL.createObjectURL(tempImg)
-            }
-            temp.push(image)
+    encodeImageFilesArrAsUrlForWorksExamples = (element) => {
+        const temp = [...this.state.worksExampleArr]
+        let reader = new FileReader();
+        reader.readAsDataURL(element)
+        reader.onloadend = () => {
+            temp.push(reader.result.split(',')[1])
             this.setState({
                 worksExampleArr: temp
             })
         }
+    }
+
+
+    addImageToWorksExampleArr = event => {
+        const tempImg = event.target.files[0]
+        const temp = [...this.state.worksExampleArrForReact]
+        temp.push({src: URL.createObjectURL(tempImg)})
+        this.setState({
+            worksExampleArrForReact: temp
+        })
+        this.encodeImageFilesArrAsUrlForWorksExamples(tempImg)
     }
 
     render() {
@@ -296,7 +320,7 @@ class TeamRegister extends Component {
                             </div>
                         </div>
 
-                        {this.state.worksExampleArr.length > 0 && <Slider Arr = {this.state.worksExampleArr}/>}
+                        {this.state.worksExampleArrForReact.length > 0 && <Slider Arr = {this.state.worksExampleArrForReact}/>}
 
                         <div className='flex mb-16 ml-12'>
                             <h1 className='text-4xl font-light'>
@@ -372,9 +396,9 @@ class TeamRegister extends Component {
 
                         <div className='mx-auto w-max'>
                             <button className='register_okButton' onClick={() => this.handleSubmit()}>
-                                {/*<Link to={`/user/`}>*/}
+                                <Link to={`/team/${this.state.idTeam}`}>
                                     ГОТОВО
-                                {/*</Link>*/}
+                                </Link>
                             </button>
                         </div>
                     </div>

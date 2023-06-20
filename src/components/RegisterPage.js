@@ -15,6 +15,7 @@ class RegisterPage extends Component {
         this.state = {
             rolesArr: [],
             worksExampleArr: [],
+            worksExampleArrForReact: [],
             login: "",
             about: "",
             dropdownState: false,
@@ -27,6 +28,7 @@ class RegisterPage extends Component {
             registerWorkExample: null,
             profileAvatarAs64: '',
             rolesArrForReact: [],
+            userId: "abc",
         }
     }
 
@@ -76,19 +78,26 @@ class RegisterPage extends Component {
         })
     }
 
-    addImageToWorksExampleArr = event => {
-        if (event.target.files && event.target.files[0]) {
-            const temp = [...this.state.worksExampleArr]
-            let tempImg = event.target.files[0]
-            let image = {
-                title: this.state.worksExampleArr.length + 1,
-                src: URL.createObjectURL(tempImg)
-            }
-            temp.push(image)
+    encodeImageFilesArrAsUrlForWorksExamples = (element) => {
+        const temp = [...this.state.worksExampleArr]
+        let reader = new FileReader();
+        reader.readAsDataURL(element)
+        reader.onloadend = () => {
+            temp.push(reader.result.split(',')[1])
             this.setState({
                 worksExampleArr: temp
             })
         }
+    }
+
+    addImageToWorksExampleArr = event => {
+        const tempImg = event.target.files[0]
+        const temp = [...this.state.worksExampleArrForReact]
+        temp.push({src: URL.createObjectURL(tempImg)})
+        this.setState({
+            worksExampleArrForReact: temp
+        })
+        this.encodeImageFilesArrAsUrlForWorksExamples(tempImg)
     }
 
     addRole = (name) => {
@@ -135,8 +144,21 @@ class RegisterPage extends Component {
         })
     }
 
-    handleSubmit = () => {
-        axios.post("http://localhost:8000/users/", {
+    addImagesToWorkExamples = (id) => {
+        this.state.worksExampleArr.forEach((image) => {
+            axios.post('http://localhost:8000/images/', {
+                image: image,
+                owner: id
+            })
+                .catch((err) => {
+                    console.log(err)
+                })
+        })
+    }
+
+
+    handleSubmit = async() => {
+        await axios.post("http://localhost:8000/users/", {
             username: this.state.login,
             additional_info: {
                 image: this.state.profileAvatarAs64,
@@ -148,11 +170,18 @@ class RegisterPage extends Component {
                 "groups": this.state.rolesArr
             },
             password: this.state.password
-        }).then(res => {
-            console.log(res.data)
-        }).catch((err) => {
+        })
+            .catch((err) => {
             console.log(err)
         })
+        axios.get(`http://localhost:8000/usernames/${this.state.login}`)
+            .then(res => {
+                const userDataId = res.data.id
+                this.addImagesToWorkExamples(userDataId)
+            })
+            .catch((err) => {
+                console.log(err);
+            })
     }
 
 
@@ -284,7 +313,7 @@ class RegisterPage extends Component {
                         </div>
                     </div>
 
-                    {this.state.worksExampleArr.length > 0 && <Slider Arr = {this.state.worksExampleArr}/>}
+                    {this.state.worksExampleArrForReact.length > 0 && <Slider Arr = {this.state.worksExampleArrForReact}/>}
 
                     <div className='ml-12 mb-24'>
                         <div className='mb-12 text-5xl font-light'>
@@ -320,7 +349,7 @@ class RegisterPage extends Component {
                     </div>
 
                     <div className='mx-auto w-max'>
-                        <button className='register_okButton' onClick={() => this.handleSubmit()}>
+                        <button className='register_okButton' onClick={async () => await this.handleSubmit()}>
                             <Link to={`/user/${this.state.login}`}>
                                 ГОТОВО
                             </Link>

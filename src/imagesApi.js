@@ -5,7 +5,7 @@ export const getImages = (length, workesExampleArr) => {
         .then((response) => {
             const images = [];
             workesExampleArr.forEach(e => {
-                const title = e.title;
+                const title = "slide";
                 const url = e.src
                 images.push({ title, url });
             })

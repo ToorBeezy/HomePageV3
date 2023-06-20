@@ -16,6 +16,7 @@ class Profile extends Component {
         dropdownState: false,
         rolesArr: this.props.roles,
         worksExampleArr: [],
+        worksExampleArrForReact: [],
         editNameFlag: false,
         name: this.props.username,
         about: this.props.about,
@@ -23,14 +24,46 @@ class Profile extends Component {
         tg: this.props.tgLink,
         profileAvatarAs64: this.props.avatar,
         rolesArrForReact: [],
+        loading: false,
+        newWorkImg: [],
+        // worksExampleArrForImagesId: [],
     }
+
+    urlToFile = async (url, filename, mimeType) => {
+        const res = await fetch(url);
+        const buf = await res.arrayBuffer();
+        return new File([buf], filename, { type: mimeType });
+    };
 
     componentDidMount() {
         const temp = this.state.rolesArr.map(e => this.CheckRolesByNumber(e))
+        const tempForWorksReact = []
         this.setState({
             rolesArrForReact: temp
         })
+        axios.get(`http://localhost:8000/userimages/${this.props.login}`)
+            .then(res => {
+                const userImagesData = res.data
+                userImagesData.forEach(e =>
+                    (async () => {
+                        const file = await this.urlToFile(
+                            `data:image/png;base64,${e.image}`,
+                            "image.png",
+                            "image/png"
+                        );
+                        // tempForWorkImagesId.push(e.id)
+                        tempForWorksReact.push({src: URL.createObjectURL(file)})
+                    })()
+                )
+            })
+        this.setState({
+            worksExampleArrForReact: tempForWorksReact,
+            loading: true,
+            // worksExampleArrForImagesId: tempForWorkImagesId
+        })
+
     }
+
 
 
     CheckRolesByNumber = (number) => {
@@ -41,9 +74,25 @@ class Profile extends Component {
         else if(number === 5) return "аналитик"
     }
 
+    encodeImageFileAsURL = (element) => {
+        let reader = new FileReader();
+        reader.readAsDataURL(element)
+        reader.onloadend = () => {
+            this.setState({
+                profileAvatarAs64: reader.result.split(',')[1]
+            })
+        }
+    }
+
+    onImageChange_register = event => {
+        let img = event.target.files[0];
+        this.encodeImageFileAsURL(img)
+    };
+
     saveProfileChanges = () => {
         const url = 'http://localhost:8000/add_info/' + `${this.props.id}` + '/'
         axios.patch(url, {
+            image: this.state.profileAvatarAs64,
             name: this.state.name,
             about: this.state.about,
             vk: this.state.vk,
@@ -52,6 +101,12 @@ class Profile extends Component {
             groups: this.state.rolesArr
         })
             .catch((err) => console.log(err))
+        this.state.newWorkImg.forEach(e => {
+            axios.post(`http://localhost:8000/images/`, {
+                image: e,
+                owner: this.props.id
+            })
+        })
     }
 
     switchNameRedactor = () => {
@@ -84,19 +139,29 @@ class Profile extends Component {
         element.style.height = (element.scrollHeight) + "px";
     }
 
-    addImageToWorksExampleArr = event => {
-        if (event.target.files && event.target.files[0]) {
-            const temp = [...this.state.worksExampleArr]
-            let tempImg = event.target.files[0]
-            let image = {
-                title: this.state.worksExampleArr.length + 1,
-                src: URL.createObjectURL(tempImg)
-            }
-            temp.push(image)
+    encodeImageFilesArrAsUrlForWorksExamples = (element) => {
+        const temp = [...this.state.worksExampleArr]
+        const tempForNewImg = [...this.state.newWorkImg]
+        let reader = new FileReader();
+        reader.readAsDataURL(element)
+        reader.onloadend = () => {
+            temp.push(reader.result.split(',')[1])
+            tempForNewImg.push(reader.result.split(',')[1])
             this.setState({
+                newWorkImg: tempForNewImg,
                 worksExampleArr: temp
             })
         }
+    }
+
+    addImageToWorksExampleArr = event => {
+        const tempImg = event.target.files[0]
+        const temp = [...this.state.worksExampleArrForReact]
+        temp.push({src: URL.createObjectURL(tempImg)})
+        this.setState({
+            worksExampleArrForReact: temp
+        })
+        this.encodeImageFilesArrAsUrlForWorksExamples(tempImg)
     }
 
     deleteRole = (pos) => {
@@ -156,7 +221,9 @@ class Profile extends Component {
 
 
         return (
-            <div>
+
+        <>
+            {this.state.loading &&<div>
                 {this.state.flag &&
                     <div className='profile pb-36'>
                         <div className='avatarDiv flex mt-16 mx-5 justify-center'>
@@ -164,11 +231,18 @@ class Profile extends Component {
                                 <img src={wmnPic}/>
                             </div>
 
+                            <input
+                                className='absolute cursor-pointer avatarInput_ForProfiles w-6 opacity-0'
+                                type="file"
+                                name="myImage"
+                                accept="image/png, image/jpeg"
+                                onChange={this.onImageChange_register} />
+
                             <div className='text-center my-auto mx-24'>
                                 {this.state.profileAvatarAs64.length > 1 &&
-                                    <img src={`data:image/jpeg;base64,${this.state.profileAvatarAs64}`}/>}
+                                    <img className='noAvatar' src={`data:image/jpeg;base64,${this.state.profileAvatarAs64}`}/>}
                                 {this.state.profileAvatarAs64.length < 1 &&
-                                    <img src={noAvatar}/>}
+                                    <img className='noAvatar' src={noAvatar}/>}
                             </div>
 
                             <div>
@@ -249,7 +323,7 @@ class Profile extends Component {
                             </div>
                         </div>
 
-                        {this.state.worksExampleArr.length > 0 && <Slider Arr = {this.state.worksExampleArr}/>}
+                        {this.state.worksExampleArrForReact.length > 0 && <Slider Arr = {this.state.worksExampleArrForReact}/>}
 
 
                         <div className='linksEdit flex align-items-lg-end mt-20 w-1/3'>
@@ -291,12 +365,11 @@ class Profile extends Component {
                             <div>
                                 <img src={wmnPic}/>
                             </div>
-
                             <div className='text-center my-auto mx-24'>
                                 {this.state.profileAvatarAs64.length > 1 &&
-                                    <img src={`data:image/jpeg;base64,${this.state.profileAvatarAs64}`}/>}
+                                    <img className='noAvatar' src={`data:image/jpeg;base64,${this.state.profileAvatarAs64}`}/>}
                                 {this.state.profileAvatarAs64.length < 1 &&
-                                    <img src={noAvatar}/>}
+                                    <img className='noAvatar' src={noAvatar}/>}
                             </div>
 
                             <div>
@@ -336,7 +409,7 @@ class Profile extends Component {
                             <h1 className='text-5xl font-light text-left'>Мои работы:</h1>
                         </div>
 
-                        {this.state.worksExampleArr.length > 0 && <Slider Arr = {this.state.worksExampleArr}/>}
+                        {this.state.worksExampleArrForReact.length > 0 && <Slider Arr = {this.state.worksExampleArrForReact}/>}
 
                         <div className='flex kontakts align-items-lg-end mt-12 w-1/3 mx-auto'>
                             <div className='text-5xl font-light mx-12'>
@@ -355,7 +428,8 @@ class Profile extends Component {
                             </div>
                         </div>
                     </div>}
-            </div>
+            </div>}
+        </>
         );
     }
 };

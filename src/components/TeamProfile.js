@@ -19,6 +19,7 @@ class TeamProfile extends Component {
         rolesArr: this.props.roles,
         rolesArrForReact: [],
         worksExampleArr: [],
+        worksExampleArrForReact: [],
         editTeamNameFlag: false,
         name: this.props.title,
         about: this.props.about,
@@ -28,11 +29,71 @@ class TeamProfile extends Component {
         arrForUsersId: this.props.participants,
         participanties: [],
         loading: false,
+        newWorkImg: [],
+    }
+
+    componentDidMount() {
+        const temp = this.state.rolesArr.map(e => this.CheckRolesByNumber(e))
+        const tempForWorksReact = []
+        this.setState({
+            rolesArrForReact: temp
+        })
+        this.fillParticipantsById(this.state.arrForUsersId)
+        axios.get(`http://localhost:8000/teamimages_of/${this.props.id}`)
+            .then(res => {
+                const userImagesData = res.data
+                userImagesData.forEach(e =>
+                    (async () => {
+                        const file = await this.urlToFile(
+                            `data:image/png;base64,${e.image}`,
+                            "image.png",
+                            "image/png"
+                        );
+                        tempForWorksReact.push({src: URL.createObjectURL(file)})
+                    })()
+                )
+            })
+        this.setState({
+            worksExampleArrForReact: tempForWorksReact,
+            loading: true
+        })
+    }
+
+    urlToFile = async (url, filename, mimeType) => {
+        const res = await fetch(url);
+        const buf = await res.arrayBuffer();
+        return new File([buf], filename, { type: mimeType });
+    };
+
+    encodeImageFilesArrAsUrlForWorksExamples = (element) => {
+        const temp = [...this.state.worksExampleArr]
+        const tempForNewImg = [...this.state.newWorkImg]
+        let reader = new FileReader();
+        reader.readAsDataURL(element)
+        reader.onloadend = () => {
+            temp.push(reader.result.split(',')[1])
+            tempForNewImg.push(reader.result.split(',')[1])
+            this.setState({
+                newWorkImg: tempForNewImg,
+                worksExampleArr: temp
+            })
+        }
+    }
+
+    addImageToWorksExampleArr = event => {
+        const tempImg = event.target.files[0]
+        const temp = [...this.state.worksExampleArrForReact]
+        temp.push({src: URL.createObjectURL(tempImg)})
+        this.setState({
+            worksExampleArrForReact: temp
+        })
+        this.encodeImageFilesArrAsUrlForWorksExamples(tempImg)
     }
 
     saveProfileChanges = () => {
         const url = 'http://localhost:8000/teams/' + `${this.props.id}` + '/'
         axios.patch(url, {
+            image: this.state.teamProfileAvatarAs64,
             title: this.state.name,
             about: this.state.about,
             vk: this.state.vk,
@@ -41,6 +102,13 @@ class TeamProfile extends Component {
             participants: this.state.arrForUsersId
         })
             .catch((err) => console.log(err))
+        console.log(this.state.newWorkImg)
+        this.state.newWorkImg.forEach(e => {
+            axios.post(`http://localhost:8000/teamimages/`, {
+                image: e,
+                team: this.props.id
+            })
+        })
     }
 
     deleteParticipantie = (id) => {
@@ -52,16 +120,6 @@ class TeamProfile extends Component {
         })
     }
 
-    componentDidMount() {
-        const temp = this.state.rolesArr.map(e => this.CheckRolesByNumber(e))
-        this.setState({
-            rolesArrForReact: temp
-        })
-        this.fillParticipantsById(this.state.arrForUsersId)
-        this.setState({
-            loading: true
-        })
-    }
 
     fillParticipantsById = async (idArr) => {
         for (const id of idArr)
@@ -123,20 +181,20 @@ class TeamProfile extends Component {
         })
     }
 
-    addImageToWorksExampleArr = event => {
-        if (event.target.files && event.target.files[0]) {
-            const temp = [...this.state.worksExampleArr]
-            let tempImg = event.target.files[0]
-            let image = {
-                title: this.state.worksExampleArr.length + 1,
-                src: URL.createObjectURL(tempImg)
-            }
-            temp.push(image)
+    encodeImageFileAsURL = (element) => {
+        let reader = new FileReader();
+        reader.readAsDataURL(element)
+        reader.onloadend = () => {
             this.setState({
-                worksExampleArr: temp
+                teamProfileAvatarAs64: reader.result.split(',')[1]
             })
         }
     }
+
+    onImageChange_register = event => {
+        let img = event.target.files[0];
+        this.encodeImageFileAsURL(img)
+    };
 
     switchTeamNameRedactor = () => {
         this.setState(state => {
@@ -243,12 +301,17 @@ class TeamProfile extends Component {
                             </div>
 
                             <div className='avatarDiv flex mt-12 mx-5 justify-center'>
-
+                                <input
+                                    className='absolute cursor-pointer mt-0 avatarInput_ForProfiles w-6 opacity-0'
+                                    type="file"
+                                    name="myImage"
+                                    accept="image/png, image/jpeg"
+                                    onChange={this.onImageChange_register} />
                                 <div className='text-center my-auto mx-24'>
                                     {this.state.teamProfileAvatarAs64.length > 1 &&
-                                        <img src={`data:image/jpeg;base64,${this.state.teamProfileAvatarAs64}`}/>}
+                                        <img className='noAvatar' src={`data:image/jpeg;base64,${this.state.teamProfileAvatarAs64}`}/>}
                                     {this.state.teamProfileAvatarAs64.length < 1 &&
-                                        <img src={noAvatar}/>}
+                                        <img className='noAvatar' src={noAvatar}/>}
                                 </div>
 
                             </div>
@@ -382,7 +445,7 @@ class TeamProfile extends Component {
                                 </div>
                             </div>
 
-                            {this.state.worksExampleArr.length > 0 && <Slider Arr={this.state.worksExampleArr}/>}
+                            {this.state.worksExampleArrForReact.length > 0 && <Slider Arr = {this.state.worksExampleArrForReact}/>}
 
 
                             <div className='linksEdit flex align-items-lg-end mt-20 w-1/3'>
@@ -428,9 +491,9 @@ class TeamProfile extends Component {
 
                                 <div className='text-center my-auto mx-24'>
                                     {this.state.teamProfileAvatarAs64.length > 1 &&
-                                        <img src={`data:image/jpeg;base64,${this.state.teamProfileAvatarAs64}`}/>}
+                                        <img className='noAvatar' src={`data:image/jpeg;base64,${this.state.teamProfileAvatarAs64}`}/>}
                                     {this.state.teamProfileAvatarAs64.length < 1 &&
-                                        <img src={noAvatar}/>}
+                                        <img className='noAvatar' src={noAvatar}/>}
                                 </div>
 
                             </div>
@@ -487,7 +550,7 @@ class TeamProfile extends Component {
                                 </h1>
                             </div>
 
-                            {this.state.worksExampleArr.length > 0 && <Slider Arr={this.state.worksExampleArr}/>}
+                            {this.state.worksExampleArrForReact.length > 0 && <Slider Arr = {this.state.worksExampleArrForReact}/>}
 
                             <div className='flex kontakts align-items-lg-end mt-12 w-1/3 mx-auto'>
                                 <div className='text-5xl font-light mx-12'>
