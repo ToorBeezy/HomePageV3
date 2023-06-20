@@ -1,13 +1,14 @@
 import React, {Component} from 'react';
 import wmnPic from '../../public/image/image 6.png'
 import manPic from '../../public/image/image 5.png'
-import avatar from '../../public/image/Ellipse 1.png'
 import VkIco from '../../public/image/Vector(1).png'
 import TgIco from '../../public/image/TelegramIco.png'
 import Editor from '../../public/image/Editor.png';
 import plusRoles from '../../public/image/plusRoles.png'
 import Slider from "./widgets/Slider/Slider";
 import plusProfileAvatar from "../../public/image/plusRoles.png";
+import noAvatar from "../../public/image/noAvatar.png";
+import axios from "axios";
 
 class Profile extends Component {
     state = {
@@ -20,6 +21,37 @@ class Profile extends Component {
         about: this.props.about,
         vk: this.props.vkLink,
         tg: this.props.tgLink,
+        profileAvatarAs64: this.props.avatar,
+        rolesArrForReact: [],
+    }
+
+    componentDidMount() {
+        const temp = this.state.rolesArr.map(e => this.CheckRolesByNumber(e))
+        this.setState({
+            rolesArrForReact: temp
+        })
+    }
+
+
+    CheckRolesByNumber = (number) => {
+        if(number === 1) return "гейм-дизайнер"
+        else if(number === 2) return "разработчик"
+        else if(number === 3) return "дизайнер"
+        else if(number === 4) return "тимлид"
+        else if(number === 5) return "аналитик"
+    }
+
+    saveProfileChanges = () => {
+        const url = 'http://localhost:8000/add_info/' + `${this.props.id}` + '/'
+        axios.patch(url, {
+            name: this.state.name,
+            about: this.state.about,
+            vk: this.state.vk,
+            telegram: this.state.tg,
+            user: this.props.id,
+            groups: this.state.rolesArr
+        })
+            .catch((err) => console.log(err))
     }
 
     switchNameRedactor = () => {
@@ -71,46 +103,36 @@ class Profile extends Component {
         if(!this.state.flag) return
         const temp = [...this.state.rolesArr];
         temp.splice(pos, 1)
+        const tempForReact = temp.map((e) => this.CheckRolesByNumber(e))
         this.setState({
-            rolesArr: temp
+            rolesArr: temp,
+            rolesArrForReact: tempForReact
         })
     }
 
     addRole = (name) => {
+        const tempForReact = [...this.state.rolesArrForReact]
         const temp = [...this.state.rolesArr]
         let role;
-        if((name === "гейм-дизайнер") && (!temp.some(e => e.name === "гейм-дизайнер")))
-            role = {
-                id: this.state.rolesArr.length + 1,
-                name: "гейм-дизайнер"
-            }
-        else if((name === "разработчик") && (!temp.some(e => e.name === "разработчик")))
-            role = {
-                id: this.state.rolesArr.length + 1,
-                name: "разработчик"
-            }
-        else if((name === "дизайнер") && (!temp.some(e => e.name === "дизайнер")))
-            role = {
-                id: this.state.rolesArr.length + 1,
-                name: "дизайнер"
-            }
-        else if((name === "тимлид") && (!temp.some(e => e.name === "тимлид")))
-            role = {
-                id: this.state.rolesArr.length + 1,
-                name: "тимлид"
-            }
-        else if((name === "аналитик") && (!temp.some(e => e.name === "аналитик")))
-            role = {
-                id: this.state.rolesArr.length + 1,
-                name: "аналитик"
-            }
+        if((name === "гейм-дизайнер") && (!temp.some(e => e === 1)))
+            role = 1
+        else if((name === "разработчик") && (!temp.some(e => e === 2)))
+            role = 2
+        else if((name === "дизайнер") && (!temp.some(e => e === 3)))
+            role = 3
+        else if((name === "тимлид") && (!temp.some(e => e === 4)))
+            role = 4
+        else if((name === "аналитик") && (!temp.some(e => e === 5)))
+            role = 5
         else{
             return
         }
+        temp.push(role)
 
-        temp.push(role);
+        tempForReact.push(this.CheckRolesByNumber(role));
         this.setState({
-            rolesArr: temp
+            rolesArr: temp,
+            rolesArrForReact: tempForReact
         })
     }
 
@@ -127,8 +149,8 @@ class Profile extends Component {
 
     render() {
 
-        const rolesList = this.state.rolesArr.map((role, pos) =>
-            <button onClick={() => this.deleteRole(pos)} className='roleContainer' key={role.id}>
+        const rolesList = this.state.rolesArrForReact.map((role, pos) =>
+            <button onClick={() => this.deleteRole(pos)} className='roleContainer' key={pos}>
                 {role}
             </button>);
 
@@ -143,7 +165,10 @@ class Profile extends Component {
                             </div>
 
                             <div className='text-center my-auto mx-24'>
-                                <img src={avatar}/>
+                                {this.state.profileAvatarAs64.length > 1 &&
+                                    <img src={`data:image/jpeg;base64,${this.state.profileAvatarAs64}`}/>}
+                                {this.state.profileAvatarAs64.length < 1 &&
+                                    <img src={noAvatar}/>}
                             </div>
 
                             <div>
@@ -153,7 +178,7 @@ class Profile extends Component {
 
                         <div className='text-center redactProfile'>
                             <div className='flex flex-col w-2/6 text-center m-auto'>
-                                <button onClick={this.switchRedactorMode} className='buttonRedact'>Сохранить изменения</button>
+                                <button onClick={() => {this.switchRedactorMode(); this.saveProfileChanges()}} className='buttonRedact'>Сохранить изменения</button>
                             </div>
                         </div>
 
@@ -268,7 +293,10 @@ class Profile extends Component {
                             </div>
 
                             <div className='text-center my-auto mx-24'>
-                                <img src={avatar}/>
+                                {this.state.profileAvatarAs64.length > 1 &&
+                                    <img src={`data:image/jpeg;base64,${this.state.profileAvatarAs64}`}/>}
+                                {this.state.profileAvatarAs64.length < 1 &&
+                                    <img src={noAvatar}/>}
                             </div>
 
                             <div>

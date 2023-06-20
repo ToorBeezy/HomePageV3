@@ -32,15 +32,12 @@ import "./styles/pages/Finder/UserFinder.css"
 class App extends Component{
     state = {
         users: [],
-        id: "1",
-        username: "Vladislav",
-        about: "Я умею смеяться и веселиться",
-        vkLink: "/vk/123",
-        tgLink: "/tg/123",
+        teams: [],
         loading: false,
     }
     componentDidMount() {
-        let userData
+        let userData;
+        let teamData;
         axios.get('http://localhost:8000/users/')
             .then(res => {
                 userData = res.data
@@ -49,29 +46,59 @@ class App extends Component{
                 });
             })
             .catch(err => console.log(err))
+            .then(() => {
+                axios.get('http://localhost:8000/teams/')
+                    .then(res => {
+                        teamData = res.data
+                        this.setState({
+                            teams: teamData
+                        });
+                    })
+                    .catch(err => console.log(err))
+            })
             .finally(() => {
                 this.setState({
-                loading: true
-            });
+                    loading: true
+                });
             })
     }
-
 
     render(){
 
         const usersList = this.state.users.map(user => {
             return( this.state.loading &&
-                    <Route key={user.id} path={`/user/${user.id - 1}`}
+                    <Route key={user.id} path={`/user/${user.username}`}
                            element={
                                <Profile
-                                   username={user.username}
+                                   id={user.id}
+                                   login={user.username}
+                                   username={user.additional_info.name}
                                    about={user.additional_info.about}
                                    vkLink={user.additional_info.vk}
                                    tgLink={user.additional_info.telegram}
-                                   roles={user.group_names}/>
+                                   roles={user.additional_info.groups}
+                                   avatar={user.additional_info.image}/>
                            }/>)
             }
         )
+
+        const teamsList = this.state.teams.map(team => {
+                return( this.state.loading &&
+                    <Route key={team.id} path={`/team/${team.id}`}
+                           element={
+                               <TeamProfile
+                                   id={team.id}
+                                   title={team.title}
+                                   about={team.about}
+                                   vkLink={team.vk}
+                                   tgLink={team.telegram}
+                                   roles={team.groups}
+                                   avatar={team.image}
+                                   participants={team.participants}/>
+                           }/>)
+            }
+        )
+
 
         return (
 
@@ -83,10 +110,16 @@ class App extends Component{
                             <Route path="/" element={ <FirstPage/> }/>
                             <Route path="/register" element={ <RegisterPage/> }/>
                             {usersList}
+                            {teamsList}
                             <Route path="/exit" element={ <LogOutPage/> }/>
                             <Route path="/teamRegister" element={ <TeamRegister/> }/>
-                            <Route path="/team" element={ <TeamProfile/> }/>
-                            <Route path="/search" element={ <Finder/> }/>
+                            <Route
+                                path="/search"
+                                element={
+                                    <Finder
+                                        users={this.state.users}
+                                        teams={this.state.teams}/>
+                                }/>
                             <Route path="/login" element={ <LoginPage/> }/>
                         </Routes>
 

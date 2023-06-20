@@ -17,67 +17,77 @@ class TeamRegister extends Component {
         teamName: "",
         worksExampleArr: [],
         teamMembersArr: [],
-        teamAvatar: null,
         workExample: null,
-        rolesArr: data,
+        rolesArr: [],
+        rolesArrForReact: [],
         teamAbout: "",
         dropdownState: false,
         users: [],
         loading: true,
-        findUserByLogin: "",
-        usersForTeamMembersById: [],
+        usersForTeamMembersByLogin: [],
         loadingById: false,
-        usersGotById: [],
-        findMemberFlag: true,
-        addMemberFlag: false,
+        tg: "",
+        vk: "",
+        profileAvatarAs64: "",
+        findUserByLogin: "",
+        arrForUsersId: [],
     }
 
-    getUsersById = () => {
-        const arr = [...this.state.usersForTeamMembersById]
-        arr.map((id) => {
-            let userDataById;
-            const temp = [...this.state.usersGotById];
-            let url = 'http://localhost:8000/users/' + `${id}`
-            axios.get(url)
-                .then(res => {
-                    userDataById = res.data
-                    if(!(temp.some(e => _.isEqual(e, userDataById))))
-                        temp.push(userDataById)
-                    this.setState({
-                        usersGotById: temp
-                    })
-                })
-                .catch(err => console.log(err))
-                .finally(() => {
-                    this.setState({
-                        findMemberFlag: true,
-                        addMemberFlag: false,
-                    })
-                })
-        })
+    CheckRolesByNumber = (number) => {
+        if(number === 1) return "гейм-дизайнер"
+        else if(number === 2) return "разработчик"
+        else if(number === 3) return "дизайнер"
+        else if(number === 4) return "тимлид"
+        else if(number === 5) return "аналитик"
     }
 
-    getUserIdByLogin = (login) => {
+    getUserDataByLogin = (login) => {
         let userData;
-        const temp = new Set([...this.state.usersForTeamMembersById]);
+        const tempForUsersId = [...this.state.arrForUsersId];
+        const temp = [...this.state.usersForTeamMembersByLogin];
         const url = 'http://localhost:8000/usernames/' + `${login}`
         axios.get(url)
             .then(res => {
-                userData = res.data.id
-                temp.add(userData)
+                userData = res.data
+                if(userData.id !== null)
+                    if(!(temp.some(e => _.isEqual(e, userData)))){
+                        temp.push(userData);
+                        tempForUsersId.push(userData.id)
+                    }
                 this.setState({
-                    usersForTeamMembersById: Array.from(temp)
+                    usersForTeamMembersByLogin: temp,
+                    arrForUsersId: tempForUsersId
                 });
             })
             .catch(err => console.log(err))
-            .finally(() => {
-                this.setState({
-                    findMemberFlag: false,
-                    addMemberFlag: true,
-                })
-            })
     }
 
+    encodeImageFileAsURL = (element) => {
+        let reader = new FileReader();
+        reader.readAsDataURL(element)
+        reader.onloadend = () => {
+            this.setState({
+                profileAvatarAs64: reader.result.split(',')[1]
+            })
+        }
+    }
+
+    handleSubmit = () => {
+        axios.post("http://localhost:8000/teams/", {
+            image: this.state.profileAvatarAs64,
+            title: this.state.teamName,
+            about: this.state.teamAbout,
+            isFind: true,
+            vk: this.state.vk,
+            telegram: this.state.tg ,
+            groups: this.state.rolesArr,
+            participants: this.state.arrForUsersId
+        }).then(res => {
+            console.log(res.data)
+        }).catch((err) => {
+            console.log(err)
+        })
+    }
 
     handleDropdownClick = () =>{
         this.setState(state => {
@@ -90,8 +100,10 @@ class TeamRegister extends Component {
     deleteRole = (pos) => {
         const temp = [...this.state.rolesArr];
         temp.splice(pos, 1)
+        const tempForReact = temp.map((e) => this.CheckRolesByNumber(e))
         this.setState({
-            rolesArr: temp
+            rolesArr: temp,
+            rolesArrForReact: tempForReact
         })
     }
 
@@ -101,49 +113,40 @@ class TeamRegister extends Component {
     }
 
     onImageChange = event => {
-        if (event.target.files && event.target.files[0]) {
-            let img = event.target.files[0];
-            this.setState({
-                teamAvatar: URL.createObjectURL(img)
-            });
-        }
+        let img = event.target.files[0];
+        this.encodeImageFileAsURL(img)
     };
 
     addRole = (name) => {
+        const tempForReact = [...this.state.rolesArrForReact]
         const temp = [...this.state.rolesArr]
         let role;
-        if((name === "гейм-дизайнер") && (!temp.some(e => e.name === "гейм-дизайнер")))
-            role = {
-                id: this.state.rolesArr.length + 1,
-                name: "гейм-дизайнер"
-            }
-        else if((name === "разработчик") && (!temp.some(e => e.name === "разработчик")))
-            role = {
-                id: this.state.rolesArr.length + 1,
-                name: "разработчик"
-            }
-        else if((name === "дизайнер") && (!temp.some(e => e.name === "дизайнер")))
-            role = {
-                id: this.state.rolesArr.length + 1,
-                name: "дизайнер"
-            }
-        else if((name === "тимлид") && (!temp.some(e => e.name === "тимлид")))
-            role = {
-                id: this.state.rolesArr.length + 1,
-                name: "тимлид"
-            }
-        else if((name === "аналитик") && (!temp.some(e => e.name === "аналитик")))
-            role = {
-                id: this.state.rolesArr.length + 1,
-                name: "аналитик"
-            }
+        if((name === "гейм-дизайнер") && (!temp.some(e => e === 1)))
+            role = 1
+
+        else if((name === "разработчик") && (!temp.some(e => e === 2)))
+            role = 2
+
+        else if((name === "дизайнер") && (!temp.some(e => e === 3)))
+            role = 3
+
+        else if((name === "тимлид") && (!temp.some(e => e === 4)))
+            role = 4
+
+        else if((name === "аналитик") && (!temp.some(e => e === 5)))
+            role = 5
+
         else{
             return
         }
+        tempForReact.push(this.CheckRolesByNumber(role))
+
 
         temp.push(role);
         this.setState({
-            rolesArr: temp
+            rolesArr: temp,
+            rolesArrForReact: tempForReact
+
         })
     }
 
@@ -158,18 +161,6 @@ class TeamRegister extends Component {
         })
     }
 
-    addTeamMembersArr = event => {
-        const temp = [...this.state.teamMembersArr]
-        let member = {
-            name: "Zakarev Alexey Vasilyevich",
-            about: "Я умею смеяться и веселиться V прошлом семестре по предмету опд получила 97 баллов",
-            rolesArr: this.state.rolesArr,
-        }
-        temp.push(member)
-        this.setState({
-            teamMembersArr: temp
-        })
-    }
 
     addImageToWorksExampleArr = event => {
         if (event.target.files && event.target.files[0]) {
@@ -187,21 +178,23 @@ class TeamRegister extends Component {
     }
 
     render() {
-        const rolesList = this.state.rolesArr.map((role, pos) =>
-            <button onClick={() => this.deleteRole(pos)} className='roleContainer' key={role.id}>
-                {role.name}
+        const rolesList = this.state.rolesArrForReact.map((role, pos) =>
+            <button type='button' onClick={() => this.deleteRole(pos)} className='roleContainer' key={pos}>
+                {role}
             </button>);
 
-        const teamMembersList = this.state.usersGotById.map((user) => {
+        const teamMembersList = this.state.usersForTeamMembersByLogin.map((user) => {
+            const roles = user.additional_info.groups.map(e => this.CheckRolesByNumber(e))
+
             return(
                 <UserMinimalisticProfile
                     key={user.id}
                     name={user.additional_info.name}
                     about={user.additional_info.about}
-                    rolesArr={user.group_names}
+                    rolesArr={roles}
                     avatar={user.additional_info.image}/>
-            );}
-            )
+            );
+        })
 
 
         return (
@@ -237,11 +230,13 @@ class TeamRegister extends Component {
                                         className='absolute cursor-pointer avatarInput w-6 opacity-0'
                                         type="file"
                                         name="myImage"
+                                        accept="image/png, image/jpeg"
                                         onChange={this.onImageChange} />
-                                    <img className='' src={plusProfileAvatar}/>
+                                    <img src={plusProfileAvatar}/>
                                 </div>
                             </div>
-                            <img src={this.state.teamAvatar} />
+                            {this.state.profileAvatarAs64.length > 1 &&
+                                <img src={`data:image/jpeg;base64,${this.state.profileAvatarAs64}`}/>}
                         </div>
 
                         <div className='flex flex-col text-center mb-20 mx-auto w-full'>
@@ -254,7 +249,7 @@ class TeamRegister extends Component {
                             <div className='w-full flex mx-auto text-center justify-center font-light'>
                                 {rolesList}
                                 {this.state.dropdownState && (
-                                    <div className='dropdown'>
+                                    <div className='dropdown z-50'>
                                         <ul className='roleContainer_list absolute top-20 right-0'>
                                             <button onClick={() => this.addRole("гейм-дизайнер")} className='role_list w-full'>гейм-дизайнер</button>
                                             <button onClick={() => this.addRole("разработчик")} className='role_list w-full'>разработчик</button>
@@ -329,18 +324,11 @@ class TeamRegister extends Component {
                                                 value={this.state.findUserByLogin}
                                                 onChange={(e) => this.setState({findUserByLogin:e.target.value})}
                                             />
-                                            {this.state.findMemberFlag &&
-                                                <button
-                                                    className='teamRegister_findUserByLoginButton p-1 ml-2 text-3xl font-light'
-                                                    onClick={() => this.getUserIdByLogin(this.state.findUserByLogin)}>
-                                                    Найти
-                                                </button>}
-                                            {this.state.addMemberFlag &&
-                                                <button
-                                                    className='teamRegister_findUserByLoginButton p-1 ml-2 text-3xl font-light'
-                                                    onClick={() => this.getUsersById()}>
-                                                    Добавить
-                                                </button>}
+                                            <button
+                                                className='teamRegister_findUserByLoginButton p-1 ml-2 text-3xl font-light'
+                                                onClick={() => this.getUserDataByLogin(this.state.findUserByLogin)}>
+                                                Добавить
+                                            </button>
                                         </div>
                                     </div>
                                 </Popup>
@@ -383,9 +371,11 @@ class TeamRegister extends Component {
                         </div>
 
                         <div className='mx-auto w-max'>
-                            <Link to='/team' className="register_okButton">
-                                ГОТОВО
-                            </Link>
+                            <button className='register_okButton' onClick={() => this.handleSubmit()}>
+                                {/*<Link to={`/user/`}>*/}
+                                    ГОТОВО
+                                {/*</Link>*/}
+                            </button>
                         </div>
                     </div>
                 }

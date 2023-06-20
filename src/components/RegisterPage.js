@@ -6,6 +6,8 @@ import VkIco from "../../public/image/Vector(1).png";
 import Slider from "./widgets/Slider/Slider";
 import plusRoles from "../../public/image/plusRoles.png";
 import axios from "axios";
+import {Link} from "react-router-dom";
+import _ from "lodash";
 
 class RegisterPage extends Component {
     constructor(props){
@@ -23,14 +25,36 @@ class RegisterPage extends Component {
             registerProfileAvatar: null,
             registerProfileAvatarFile: null,
             registerWorkExample: null,
+            profileAvatarAs64: '',
+            rolesArrForReact: [],
+        }
+    }
+
+    CheckRolesByNumber = (number) => {
+        if(number === 1) return "гейм-дизайнер"
+        else if(number === 2) return "разработчик"
+        else if(number === 3) return "дизайнер"
+        else if(number === 4) return "тимлид"
+        else if(number === 5) return "аналитик"
+    }
+
+    encodeImageFileAsURL = (element) => {
+        let reader = new FileReader();
+        reader.readAsDataURL(element)
+        reader.onloadend = () => {
+            this.setState({
+                profileAvatarAs64: reader.result.split(',')[1]
+            })
         }
     }
 
     deleteRole = (pos) => {
         const temp = [...this.state.rolesArr];
         temp.splice(pos, 1)
+        const tempForReact = temp.map((e) => this.CheckRolesByNumber(e))
         this.setState({
-            rolesArr: temp
+            rolesArr: temp,
+            rolesArrForReact: tempForReact
         })
     }
 
@@ -41,10 +65,7 @@ class RegisterPage extends Component {
 
     onImageChange_register = event => {
         let img = event.target.files[0];
-        this.setState({
-            registerProfileAvatar: URL.createObjectURL(img),
-            registerProfileAvatarFile: img
-        });
+        this.encodeImageFileAsURL(img)
     };
 
     handleDropdownClick = () =>{
@@ -71,30 +92,35 @@ class RegisterPage extends Component {
     }
 
     addRole = (name) => {
+        const tempForReact = [...this.state.rolesArrForReact]
         const temp = [...this.state.rolesArr]
         let role;
-        if((name === "гейм-дизайнер") && (!temp.some(e => e === "гейм-дизайнер")))
-            role = "гейм-дизайнер"
+        if((name === "гейм-дизайнер") && (!temp.some(e => e === 1)))
+            role = 1
 
-        else if((name === "разработчик") && (!temp.some(e => e === "разработчик")))
-            role = "разработчик"
+        else if((name === "разработчик") && (!temp.some(e => e === 2)))
+            role = 2
 
-        else if((name === "дизайнер") && (!temp.some(e => e === "дизайнер")))
-            role = "дизайнер"
+        else if((name === "дизайнер") && (!temp.some(e => e === 3)))
+            role = 3
 
-        else if((name === "тимлид") && (!temp.some(e => e === "тимлид")))
-            role = "тимлид"
+        else if((name === "тимлид") && (!temp.some(e => e === 4)))
+            role = 4
 
-        else if((name === "аналитик") && (!temp.some(e => e === "аналитик")))
-            role = "аналитик"
+        else if((name === "аналитик") && (!temp.some(e => e === 5)))
+            role = 5
 
         else{
             return
         }
+        tempForReact.push(this.CheckRolesByNumber(role))
+
 
         temp.push(role);
         this.setState({
-            rolesArr: temp
+            rolesArr: temp,
+            rolesArrForReact: tempForReact
+
         })
     }
 
@@ -109,25 +135,17 @@ class RegisterPage extends Component {
         })
     }
 
-    handleSubmit = (e) => {
-        e.preventDefault();
-        const uploadData = new FormData();
-        console.log(this.state.registerProfileAvatarFile)
-        uploadData.append('image', this.state.registerProfileAvatarFile)
-        console.log(uploadData);
+    handleSubmit = () => {
         axios.post("http://localhost:8000/users/", {
             username: this.state.login,
-            group_names: this.state.rolesArr,
             additional_info: {
-                image: uploadData,
+                image: this.state.profileAvatarAs64,
                 name: this.state.registerName,
                 about: this.state.about,
                 vk: this.state.vk,
                 telegram: this.state.tg ,
                 user: null,
-            },
-            headers: {
-                'content-type': 'multipart/form-data',
+                "groups": this.state.rolesArr
             },
             password: this.state.password
         }).then(res => {
@@ -137,36 +155,10 @@ class RegisterPage extends Component {
         })
     }
 
-    // handleSubmit = (e) => {
-    //     e.preventDefault();
-    //     let form_data = new FormData();
-    //     form_data.append('username', this.state.login);
-    //     form_data.append('group_names', this.state.rolesArr);
-    //     form_data.append('password', this.state.password);
-    //     form_data.append('additional_info.image', this.state.registerProfileAvatarFile, this.state.registerProfileAvatarFile.name);
-    //     form_data.append('additional_info.name', this.state.registerName);
-    //     form_data.append('additional_info.about', this.state.about);
-    //     form_data.append('additional_info.vk', this.state.vk);
-    //     form_data.append('additional_info.telegram', this.state.tg);
-    //     form_data.append('additional_info.user', null);
-    //     console.log(form_data);
-    //     let url = 'http://localhost:8000/users/';
-    //     axios.post(url, form_data, {
-    //         headers: {
-    //             'content-type': 'multipart/form-data'
-    //         }
-    //     })
-    //         .then(res => {
-    //             console.log(res.data);
-    //         })
-    //         .catch(err => console.log(err))
-    // };
-
-
 
     render() {
 
-        const rolesList = this.state.rolesArr.map((role, pos) =>
+        const rolesList = this.state.rolesArrForReact.map((role, pos) =>
             <button type='button' onClick={() => this.deleteRole(pos)} className='roleContainer' key={pos}>
                 {role}
             </button>);
@@ -181,7 +173,7 @@ class RegisterPage extends Component {
                     </a>
                 </div>
 
-                <form onSubmit={this.handleSubmit}>
+                <div>
                     <div className='my-16 mx-8'>
                         <div className='mb-8'>
                             <h1 className='text-4xl font-light mb-4'>
@@ -230,7 +222,8 @@ class RegisterPage extends Component {
                                 <img src={plusProfileAvatar}/>
                             </div>
                         </div>
-                        <img src={this.state.registerProfileAvatar} />
+                        {this.state.profileAvatarAs64.length > 1 &&
+                            <img src={`data:image/jpeg;base64,${this.state.profileAvatarAs64}`}/>}
                     </div>
 
                     <div className='flex flex-col text-center mb-20 mx-auto w-full'>
@@ -253,7 +246,7 @@ class RegisterPage extends Component {
                                     </ul>
                                 </div>
                             )}
-                            {this.state.rolesArr.length < 5 &&
+                            {this.state.rolesArrForReact.length < 5 &&
                                 <button type='button' className='ml-5 mt-2' onBlur={this.hide} onClick={this.handleDropdownClick}>
                                     <img src={plusRoles}/>
                                 </button>}
@@ -327,9 +320,13 @@ class RegisterPage extends Component {
                     </div>
 
                     <div className='mx-auto w-max'>
-                        <input type='submit' value='ГОТОВО' className="register_okButton"/>
+                        <button className='register_okButton' onClick={() => this.handleSubmit()}>
+                            <Link to={`/user/${this.state.login}`}>
+                                ГОТОВО
+                            </Link>
+                        </button>
                     </div>
-                </form>
+                </div>
             </div>
         );
     }
