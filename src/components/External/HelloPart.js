@@ -1,5 +1,4 @@
 import React from 'react';
-import colage from "../../../public/image/colage.png";
 
 const HelloPart = () => {
     return (
@@ -13,7 +12,7 @@ const HelloPart = () => {
             </div>
 
             <div className='colage'>
-                <img src={colage}  alt=''/>
+                <img src=''  alt=''/>
             </div>
         </div>
     );

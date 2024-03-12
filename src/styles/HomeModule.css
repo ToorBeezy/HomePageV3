@@ -9,3 +9,7 @@
     flex-direction: column;
     align-items: center;
 }
+
+.container__ {
+    padding: 2rem 7.5rem 7rem;
+}

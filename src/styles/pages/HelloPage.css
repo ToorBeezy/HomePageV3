@@ -1,0 +1,67 @@
+.hello_page_container {
+    padding: 2rem 7.5rem;
+}
+
+.hello_page_left_container_buttons_container button {
+    border-radius: 1rem 3rem;
+    border: 2px solid #FC552F;
+    padding: 1.3rem;
+    width: 35%;
+    color: #FC552F;
+    background-color: #FC552F;
+}
+
+.hello_page_left_container_subscribe_container_subscribe {
+    border: 1px solid #585858;
+    background: #1A1A1F;
+    border-radius: 4rem;
+}
+
+.hello_page_left_container_email_container {
+    border-radius: 1.5rem 4rem;
+    padding: .5rem 1.5rem;
+    margin: 2rem 0;
+    background-color: #07070C;
+}
+
+.hello_page_absolute_number{
+    padding: 2.3rem;
+    top: 27.2rem;
+    left: 45.3%;
+    border-radius: 50%;
+}
+
+.hello_page_absolute_number p {
+    width: 85px;
+    height: 85px;
+}
+
+.hello_page_right_container_top_container {
+    border-radius: 4rem;
+    padding: 4rem 6rem;
+    background-color: #FC552F;
+    aspect-ratio:1.5;
+    mask: radial-gradient(5rem at bottom left,#0000 97%,#000);
+}
+
+.hello_page_right_container_bottom_container {
+    border-radius: 4rem;
+    padding: 3rem 6rem;
+    background-color: #FC552F;
+    mask: radial-gradient(5rem at top left,#0000 97%,#000);
+}
+
+.hello_page_right_container_first_poster img{
+    border-radius: 6rem;
+    object-fit: cover;
+    height: 28rem;
+    width: 92.5%;
+    margin-left: 2rem;
+}
+
+.hello_page_right_container_second_poster img {
+    border-radius: 6rem;
+    object-fit: cover;
+    height: 30rem;
+    width: 100%;
+}

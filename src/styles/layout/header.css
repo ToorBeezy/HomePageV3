@@ -1,61 +1,48 @@
-header {
-    will-change: transform;
-    transition: transform 0.5s cubic-bezier(0.694, 0.048, 0.335, 1), background 0.3s, -webkit-transform 0.5s cubic-bezier(0.694, 0.048, 0.335, 1);
-    transform: translateY(0);
-    -webkit-transform: translateY(0);
-    border-bottom: 3px solid #A8BAFA;
+.header_container {
+    padding: 2rem 7.5rem 7rem;
 }
 
-header ul a {
-    color: whitesmoke;
-    --bs-link-hover-color: #ff97ba;
-    font-family: 'Sansation', sans-serif;
-    font-weight: 700;
+.header_logo-text {
+    color: #FC552F;
 }
 
-.logo {
-    font-family: 'Rozha One', sans-serif;
-    line-height: 1rem;
-    font-size: 3.5rem;
-    margin: 2rem;
-    margin-top: 2.8rem;
-    margin-right: 0rem;
-
-}
-
-.icons{
-    margin-right: 1rem;
-}
-
-.language:hover {
-    transform: scale(110%);
-}
-
-.language {
-    margin: 1rem;
-    margin-top: .4rem;
-
-}
-
-.menu {
-    margin: 1rem;
-    margin-top: .35rem;
-    padding-top: 0rem;
-    padding-right: 1rem;
-    padding-left: .7rem;
-}
-
-.menu-left a {
+.header_nav_menu li a {
     position: relative;
-    transition: color .35s ease;
-    font-size: 22px;
-    margin: 0px 5px;
-    padding: 2px 20px;
-    font-family: 'Sansation', sans-serif;
+    font-size: 2rem;
     font-weight: 400;
+    color: #6E727E;
 }
 
-.menu-left a:before {
+.header_nav_menu a:not([href]):not([class]) {
+    color: #6E727E;
+    text-decoration: none;
+}
+
+header div ul li {
+    padding: 1rem 1.5rem;
+}
+
+.header_get_started_button {
+    border-radius: 1rem 3rem;
+    height: 100%;
+    padding: 1rem 2.5rem;
+    background: #FC552F;
+}
+
+.header_get_started_button:hover {
+    scale: 103%;
+}
+
+/*@media (max-width: 1536px) {*/
+/*    .banner{*/
+/*        height: auto;*/
+/*    }*/
+/*}*/
+
+
+/*make hover animation just to be cool*/
+
+.header_nav_menu a:before {
     content: '';
     display: block;
     position: absolute;
@@ -66,7 +53,7 @@ header ul a {
     transition: width 0s ease, background .35s ease;
 }
 
-.menu-left a:after {
+.header_nav_menu a:after {
     content: '';
     display: block;
     position: absolute;
@@ -74,51 +61,18 @@ header ul a {
     bottom: 0;
     height: 2px;
     width: 0;
-    background: #fff;
+    background: #6E727E;
     transition: width .35s ease;
 }
 
-.menu-left a:hover:before {
+.header_nav_menu a:hover:before {
     width: 100%;
-    background: #fff;
+    background: #6E727E;
     transition: width .35s ease;
 }
 
-.menu-left a:hover:after {
+.header_nav_menu a:hover:after {
     width: 100%;
     background: transparent;
     transition: all 0s ease;
-}
-
-header div ul li {
-    background-color: #1044FD;
-    border-radius: 50px;
-    margin: 2rem;
-    padding: 2px 5px;
-}
-
-.menu-left {
-    -webkit-transition: all 0.3s ease-out;
-    -moz-transition: all 0.3s ease-out;
-    -ms-transition: all 0.3s ease-out;
-    -o-transition: all 0.3s ease-out;
-    transition: all 0.3s ease-out;
-    font-family: "SansationLight", sans-serif;
-    font-size: 1.3rem;
-    color: #000;
-    font-weight: 100;
-    -webkit-font-smoothing: antialiased;
-    -webkit-text-size-adjust: 100%;
-}
-
-ul.menu-left:before {
-    content: '';
-    display: table;
-    clear: both;
-}
-
-@media (max-width: 1536px) {
-    .banner{
-        height: auto;
-    }
 }

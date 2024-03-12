@@ -1,7 +1,73 @@
-.footer {
-    background: #446DFF;
-    height: 100px;
+.footer_container {
+    background: #07070C;
     bottom: auto;
     width: 100%;
     position: absolute;
+    padding: 2.5rem 2.5rem 3rem 2.5rem;
+}
+
+.footer_subscribe {
+    border: 1px solid #585858;
+    background: #1A1A1F;
+    border-radius: 3rem;
+}
+
+.footer_email_container {
+    border-radius: 1.5rem 4rem;
+    padding: .5rem 1.5rem;
+    background-color: #07070C;
+    width: 120%;
+}
+
+.footer_subscribe_button {
+    border-radius: 1rem 3rem;
+    padding: 1rem 1.5rem;
+    background-color: #FC552F;
+}
+
+.footer_email_input{
+    outline:none;
+    background: none;
+}
+
+.footer_nav_menu li a {
+    position: relative;
+    font-size: 2rem;
+    font-weight: 400;
+    color: #6E727E;
+}
+
+.footer_nav_menu a:before {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 2px;
+    width: 0;
+    transition: width 0s ease, background .35s ease;
+}
+
+.footer_nav_menu a:after {
+    content: '';
+    display: block;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    width: 0;
+    background: #fff;
+    transition: width .35s ease;
+}
+
+.footer_nav_menu a:hover:before {
+    width: 100%;
+    background: #fff;
+    transition: width .35s ease;
+}
+
+.footer_nav_menu a:hover:after {
+    width: 100%;
+    background: transparent;
+    transition: all 0s ease;
 }
