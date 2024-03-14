@@ -50,7 +50,7 @@ class HelloPage extends Component {
                                 <div className='hello_page_left_container_email_container flex justify-between items-center'>
                                     <div className='pr-3 w-full'>
                                         <input
-                                            className='footer_email_input py-3 w-full text-3xl text-white'
+                                            className='footer_email_input py-3 w-full text-3xl text-white cursor-default'
                                             type='text'
                                             placeholder="Email Address"
                                             value={this.state.name}

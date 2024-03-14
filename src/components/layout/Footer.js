@@ -48,22 +48,22 @@ class Footer extends Component {
                         <div className='footer_contacts p-7 pb-0'>
                             <ul className="flex font-light w-full justify-center items-center cursor-default gap-20">
                                 <li>
-                                    <div className='flex items-center'>
-                                        <img src={mapIcon} className='pr-3 h-full' alt=''/>
-                                        <p>Java, Indonesia</p>
+                                    <div className='flex items-center cursor-pointer'>
+                                        <img src={mapIcon} className='pr-3 h-full' alt=''/>   {/* <li> elements change on Link from nextJS */}
+                                        <p className='cursor-pointer'>Java, Indonesia</p>                                  {/*to make link for map, mail and instagram */}
                                     </div>
                                 </li>
                                 <li>
-                                    <div className='flex items-center'>
+                                    <div className='flex items-center cursor-pointer'>
                                         <img src={mailIcon} className='pr-3 h-full' alt=''/>
-                                        <p>Yourmail@mail.com</p>
+                                        <p className='cursor-pointer'>Yourmail@mail.com</p>
                                     </div>
                                 </li>
 
                                 <li>
-                                    <div className='flex items-center'>
+                                    <div className='flex items-center cursor-pointer'>
                                         <img src={instIcon} className='pr-3 h-full' alt=''/>
-                                        <p>Your Instagram</p>
+                                        <p className='cursor-pointer'>Your Instagram</p>
                                     </div>
                                 </li>
                             </ul>
@@ -80,7 +80,7 @@ class Footer extends Component {
                         <div className='footer_email_container h-full flex justify-between items-center'>
                             <div className='pr-3 w-full'>
                                 <input
-                                    className='footer_email_input py-3 w-full text-5xl text-white'
+                                    className='footer_email_input py-3 w-full text-5xl text-white cursor-default'
                                     type='text'
                                     placeholder="Email Address"
                                     value={this.state.name}
